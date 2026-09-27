@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>Trading Ecosystem Lab</title>
+<style>
+:root{
+  --bg:#0b0d10;--panel:#12161b;--panel2:#171c22;--line:#29313a;
+  --text:#f4f6f8;--muted:#98a2ad;--accent:#f3b43f;--good:#62d18b;
+  --bad:#ff7171;--blue:#6aa9ff;--violet:#b18cff;--radius:16px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+.app{max-width:1040px;margin:auto;padding:16px 14px 80px}
+.top{position:sticky;top:0;z-index:15;background:rgba(11,13,16,.94);backdrop-filter:blur(14px);display:flex;justify-content:space-between;align-items:center;padding:10px 0 12px;border-bottom:1px solid rgba(41,49,58,.6);margin-bottom:16px}
+.brand{font-weight:850;letter-spacing:.08em;font-size:13px}
+.ver{font-size:11px;color:var(--muted);margin-top:2px}
+.nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.nav button,.secondary,.ghost,.danger{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:9px 11px;cursor:pointer}
+.nav button.active{border-color:var(--accent);color:var(--accent)}
+.danger{border-color:#5c2c31;color:#ffb5b5;background:#2a171a}
+.primary{border:0;background:var(--accent);color:#1b1407;border-radius:11px;padding:11px 15px;font-weight:800;cursor:pointer}
+.goodbtn{border:1px solid #315f43;background:#16261d;color:#9ce9b7;border-radius:10px;padding:10px 12px;cursor:pointer}
+.badbtn{border:1px solid #643438;background:#2b191b;color:#ffb0b0;border-radius:10px;padding:10px 12px;cursor:pointer}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0}
+.card.soft{background:#0f1317}
+.card h2,.card h3{margin:0 0 9px}
+.kicker{font-size:11px;letter-spacing:.1em;font-weight:850;color:var(--accent)}
+h1{font-size:25px;margin:7px 0 5px}
+h2{font-size:18px}
+h3{font-size:14px;letter-spacing:.04em}
+.sub{color:var(--muted);line-height:1.5;margin:0 0 14px}
+.muted,.hint{color:var(--muted);font-size:12px}
+.hint{line-height:1.45;margin-top:5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric{background:#0e1216;border:1px solid var(--line);border-radius:13px;padding:13px}
+.metric .v{font-size:22px;font-weight:850;margin-top:4px}
+.metric .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.quick{cursor:pointer;min-height:110px;display:flex;flex-direction:column;justify-content:space-between}
+.quick:hover{border-color:#4b5866}
+.quick b{font-size:15px}
+.quick span{color:var(--muted);font-size:12px;line-height:1.35}
+label{display:block;color:var(--muted);font-size:12px;margin:12px 0 6px}
+input,select,textarea{
+  width:100%;background:#0d1115;color:var(--text);border:1px solid var(--line);
+  border-radius:10px;padding:11px 12px;outline:none
+}
+input:focus,select:focus,textarea:focus{border-color:#536170}
+textarea{min-height:86px;resize:vertical}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.choices{display:flex;gap:7px;flex-wrap:wrap}
+.choice{border:1px solid var(--line);background:#0d1115;color:#dbe2e8;border-radius:10px;padding:9px 10px;cursor:pointer}
+.choice.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.choice.good.active{border-color:var(--good);box-shadow:0 0 0 1px var(--good) inset}
+.choice.bad.active{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad) inset}
+.choice.blue.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
+.multi .choice.active{background:#1e242a}
+.hidden{display:none!important}
+.sep{height:1px;background:var(--line);margin:16px 0}
+.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 7px;font-size:11px;margin:2px;color:#d5dde5}
+.badge.good{border-color:#315f43;color:#9ce9b7}
+.badge.bad{border-color:#643438;color:#ffb0b0}
+.badge.accent{border-color:#715927;color:#ffd06f}
+.timeline{position:relative}
+.titem{border-left:2px solid var(--line);padding:4px 0 14px 14px;margin-left:5px}
+.titem:last-child{padding-bottom:0}
+.titem .time{font-size:11px;color:var(--muted)}
+.titem .title{font-weight:750;margin:3px 0}
+.titem .detail{font-size:12px;color:#c8d0d8;line-height:1.4}
+.sessionbar{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.sessionbar .big{font-weight:850;font-size:18px}
+.floor{font-size:12px;color:var(--muted);margin-top:4px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:650px;font-size:12px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:700;background:#0f1317}
+tr:last-child td{border-bottom:0}
+.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.notice{border:1px dashed #495665;background:#0d1115;border-radius:12px;padding:12px;color:#cbd3dc;font-size:12px;line-height:1.45}
+.pillrow{display:flex;flex-wrap:wrap;gap:5px}
+.sheet{max-width:760px;margin:0 auto}
+.rangeRow{display:grid;grid-template-columns:1fr 70px;gap:10px;align-items:center}
+input[type=range]{padding:0;border:0;background:transparent}
+.expRow{display:grid;grid-template-columns:1.3fr 1fr .8fr .8fr auto;gap:7px;align-items:end;margin-bottom:8px}
+.iconbtn{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:#211719;color:#ff9a9a;cursor:pointer}
+.sessionItem{padding:12px 0;border-top:1px solid var(--line)}
+.sessionItem:first-child{border-top:0}
+.sessionHead{display:flex;justify-content:space-between;gap:12px}
+.sessionHead b{font-size:14px}
+.empty{text-align:center;color:var(--muted);padding:24px 10px}
+.smallcaps{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.frameworkFlow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.flowbox{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0e1216}
+.flowbox b{display:block;font-size:12px;margin-bottom:5px}
+.flowbox span{font-size:11px;color:var(--muted);line-height:1.4}
+@media(max-width:760px){
+  .grid2,.grid3,.grid4,.frameworkFlow{grid-template-columns:1fr}
+  .sessionbar,.sessionHead{flex-direction:column}
+  .expRow{grid-template-columns:1fr 1fr}
+  .expRow .removeCell{grid-column:2}
+  .app{padding-left:11px;padding-right:11px}
+  h1{font-size:22px}
+  .top{align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="brand">TRADING ECOSYSTEM LAB</div>
+      <div class="ver">v0.1 — data collection, not a journal</div>
+    </div>
+    <div class="nav">
+      <button id="navHome" onclick="showView('home')">Today</button>
+      <button id="navData" onclick="showView('data')">Data</button>
+      <button id="navFramework" onclick="showView('framework')">Framework</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="view_home">
+      <div id="noSession">
+        <div class="kicker">START FROM THE DAY, NOT THE TRADE</div>
+        <h1>Nuova sessione di osservazione</h1>
+        <p class="sub">L’app raccoglie snapshot del contesto, blocchi di trading e percorso economico. Non serve registrare ogni scalp.</p>
+        <div class="card quick" onclick="openForm('start')">
+          <div><b>Avvia sessione</b><div class="hint">Definisci soltanto i guardrail economici e il mercato. Il resto si costruisce durante la giornata.</div></div>
+          <span>Start →</span>
+        </div>
+      </div>
+
+      <div id="activeSession" class="hidden">
+        <div class="card">
+          <div class="sessionbar">
+            <div>
+              <div class="smallcaps">ACTIVE SESSION</div>
+              <div class="big" id="activeTitle">—</div>
+              <div class="muted" id="activeMeta">—</div>
+            </div>
+            <div style="text-align:right">
+              <div class="smallcaps">CURRENT P&L</div>
+              <div class="big" id="currentPnl">$0</div>
+              <div class="floor" id="floorText">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid4" id="stateMetrics">
+          <div class="metric"><div class="l">Regime now</div><div class="v" id="mRegime">—</div></div>
+          <div class="metric"><div class="l">Trades logged</div><div class="v" id="mTrades">0</div></div>
+          <div class="metric"><div class="l">Peak P&L</div><div class="v" id="mPeak">$0</div></div>
+          <div class="metric"><div class="l">Gross exposure</div><div class="v" id="mGross">0</div></div>
+        </div>
+
+        <div class="kicker" style="margin-top:20px">QUICK CAPTURE</div>
+        <div class="grid2">
+          <div class="card quick" onclick="openForm('context')">
+            <b>Context Snapshot</b>
+            <span>Regime, sessione, ATR, TPO, VWAP. Solo quando cambia qualcosa.</span>
+          </div>
+          <div class="card quick" onclick="openForm('block')">
+            <b>Trading Block</b>
+            <span>Un blocco può contenere 1 trade o 30 scalp. È l’unità operativa.</span>
+          </div>
+          <div class="card quick" onclick="openForm('pnl')">
+            <b>P&L Checkpoint</b>
+            <span>Traccia Build → Boost → Deploy e il giveback dal peak.</span>
+          </div>
+          <div class="card quick" onclick="openForm('exposure')">
+            <b>Multi-Prop Exposure</b>
+            <span>Fotografa long/short simultanei, gross e net exposure.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="sectionTitle">
+            <div><h3>Timeline della giornata</h3><div class="muted">Gli ultimi eventi registrati.</div></div>
+            <button class="secondary" onclick="openForm('close')">Close session</button>
+          </div>
+          <div class="sep"></div>
+          <div id="todayTimeline" class="timeline"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATA -->
+    <section id="view_data" class="hidden">
+      <div class="kicker">DESCRIPTIVE DATA ONLY</div>
+      <h1>Quello che stiamo imparando</h1>
+      <p class="sub">Queste statistiche descrivono il campione raccolto. Non dichiarano un edge e non trasformano pochi casi in una regola.</p>
+
+      <div class="notice">Prima di circa 20 blocchi comparabili, considera qualsiasi differenza come un indizio da approfondire, non come una conclusione.</div>
+
+      <div class="grid4" style="margin-top:12px">
+        <div class="metric"><div class="l">Sessions</div><div class="v" id="aSessions">0</div></div>
+        <div class="metric"><div class="l">Trading blocks</div><div class="v" id="aBlocks">0</div></div>
+        <div class="metric"><div class="l">Trades</div><div class="v" id="aTrades">0</div></div>
+        <div class="metric"><div class="l">Closed P&L</div><div class="v" id="aPnl">$0</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Regime × risultato</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Regime</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg block</th><th>Avg sync</th></tr></thead>
+          <tbody id="regimeTable"></tbody>
+        </table></div>
+      </div>
+
+      <div class="card">
+        <h3>Fase della giornata × risultato</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Phase</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg block</th><th>Mean-revert</th><th>Directional</th></tr></thead>
+          <tbody id="phaseTable"></tbody>
+        </table></div>
+      </div>
+
+      <div class="card">
+        <h3>Build / Boost / Deploy</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Economic role</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg block</th></tr></thead>
+          <tbody id="roleTable"></tbody>
+        </table></div>
+      </div>
+
+      <div class="card">
+        <h3>Execution style</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Execution</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg sync</th></tr></thead>
+          <tbody id="execTable"></tbody>
+        </table></div>
+      </div>
+
+      <div class="card">
+        <h3>Hypothesis tracker</h3>
+        <div class="muted" style="margin-bottom:10px">Confronta l’ipotesi: fuori RTH più mean reverting; RTH/MOC più directional.</div>
+        <div id="hypothesisBox"></div>
+      </div>
+
+      <div class="card">
+        <h3>Behavior flags</h3>
+        <div id="behaviorBox" class="pillrow"></div>
+      </div>
+
+      <div class="card">
+        <h3>Sessioni registrate</h3>
+        <div id="sessionList"></div>
+      </div>
+
+      <div class="card">
+        <h3>Backup & export</h3>
+        <p class="muted">I dati restano nel browser di questo dispositivo. Fai export regolari se userai GitHub Pages da iPhone.</p>
+        <div class="actions">
+          <button class="secondary" onclick="exportJSON()">Export JSON</button>
+          <button class="secondary" onclick="exportBlocksCSV()">Export blocks CSV</button>
+          <button class="secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+          <input class="hidden" id="importFile" type="file" accept=".json,application/json" onchange="importJSON(event)">
+          <button class="danger" onclick="resetAll()">Reset all data</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FRAMEWORK -->
+    <section id="view_framework" class="hidden">
+      <div class="kicker">WORKING HYPOTHESES</div>
+      <h1>Framework corrente</h1>
+      <p class="sub">Non sono regole definitive. Sono le ipotesi che l’app deve aiutarci a confermare, correggere o abbandonare.</p>
+
+      <div class="frameworkFlow">
+        <div class="flowbox"><b>1 · TIME</b><span>Asia → Europe → NY RTH → Late RTH / MOC. La fase crea una prior expectation, non determina il trade.</span></div>
+        <div class="flowbox"><b>2 · REGIME</b><span>P&F aiuta a distinguere Mean Reversion / Chop da Directional / Momentum. Unclear resta una risposta valida.</span></div>
+        <div class="flowbox"><b>3 · EXECUTION</b><span>Chop → TPO / VAH / VAL → tendenzialmente Limit. Directional → 30s / 9EMA / pinbar / VWAP → tendenzialmente Market.</span></div>
+        <div class="flowbox"><b>4 · MONEY</b><span>Pre-RTH Build the fund → RTH Boost → MOC Deploy, dentro guardrail economici.</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Mean Reversion / Chop</h3>
+        <div class="pillrow">
+          <span class="badge">P&F</span><span class="badge">TPO</span><span class="badge">VAH</span><span class="badge">VAL</span><span class="badge">Limit orders</span><span class="badge">Small repeated moves</span>
+        </div>
+        <p class="hint">La 9EMA perde importanza. L’ampiezza della Value Area va osservata, soprattutto nelle fasi tarde della giornata.</p>
+      </div>
+
+      <div class="card">
+        <h3>Directional / Momentum</h3>
+        <div class="pillrow">
+          <span class="badge">30 sec</span><span class="badge">9EMA</span><span class="badge">Pinbar</span><span class="badge">VWAP</span><span class="badge">Break & Retest</span><span class="badge">Market orders</span>
+        </div>
+        <p class="hint">Quando il mercato esce dal consolidamento può entrare la logica Break & Retest e il canale a due uscite intorno alla 9EMA.</p>
+      </div>
+
+      <div class="card">
+        <h3>Economic architecture</h3>
+        <div class="grid3">
+          <div class="metric"><div class="l">PRE-RTH</div><div class="v" style="font-size:16px">BUILD</div><div class="hint">Creare il fondo.</div></div>
+          <div class="metric"><div class="l">RTH</div><div class="v" style="font-size:16px">BOOST</div><div class="hint">Main trade: VWAP B&R / rejection.</div></div>
+          <div class="metric"><div class="l">MOC</div><div class="v" style="font-size:16px">DEPLOY</div><div class="hint">Uso del gain di giornata, entro i guardrail.</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Risk box</h3>
+        <div class="pillrow"><span class="badge accent">DLL</span><span class="badge accent">WLL</span><span class="badge accent">Daily peak / giveback</span><span class="badge accent">Exposure</span></div>
+        <p class="hint">Working principle: maximum freedom inside a hard risk box. Restano da studiare stop, R factor, micro-scalping, MOC e uso del gain.</p>
+      </div>
+
+      <div class="card">
+        <h3>Account / Exposure architecture</h3>
+        <p class="hint">Possibilità da studiare: esposizioni concordi o contrapposte su più prop firm, ad esempio 2 LONG su Prop A e 2 SHORT su Prop B. L’app registra gross e net exposure e se la compatibilità con le regole della prop firm è stata verificata.</p>
+      </div>
+    </section>
+
+    <!-- FORMS -->
+    <section id="form_start" class="hidden sheet">
+      <div class="kicker">NEW SESSION</div><h1>Avvia la giornata</h1>
+      <div class="card">
+        <div class="grid2">
+          <div><label>Date</label><input id="st_date" type="date"></div>
+          <div><label>Market / Contract</label><input id="st_market" value="ES" placeholder="ES"></div>
+        </div>
+        <div class="grid3">
+          <div><label>DLL ($)</label><input id="st_dll" type="number" step="1" value="1000"></div>
+          <div><label>WLL / weekly guardrail ($)</label><input id="st_wll" type="number" step="1" placeholder="optional"></div>
+          <div><label>Max giveback from daily peak ($)</label><input id="st_giveback" type="number" step="1" value="500"></div>
+        </div>
+        <label>Prop firms / accounts in play</label>
+        <input id="st_props" placeholder="es. Topstep A, Topstep B">
+        <label>Starting note / prior expectation</label>
+        <textarea id="st_note" placeholder="Facoltativo. Es.: overnight balance; mi aspetto rotazione fino a prova contraria."></textarea>
+        <div class="actions"><button class="primary" onclick="startSession()">Start session</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+      </div>
+    </section>
+
+    <section id="form_context" class="hidden sheet">
+      <div class="kicker">CONTEXT SNAPSHOT</div><h1>Che mercato sto guardando?</h1>
+      <p class="sub">Compilalo solo quando cambia qualcosa di significativo.</p>
+      <div class="card">
+        <div class="grid2">
+          <div><label>Time</label><input id="cx_time" type="time"></div>
+          <div><label>Session phase</label><select id="cx_phase">
+            <option>Asia</option><option selected>Europe</option><option>NY RTH</option><option>Late RTH / MOC</option>
+          </select></div>
+        </div>
+        <label>Prior expectation</label>
+        <div class="choices" data-group="cx_expect"><button class="choice" data-v="Mean Reversion">Mean Reversion</button><button class="choice" data-v="Directional">Directional</button><button class="choice" data-v="Neutral">Neutral</button></div>
+        <label>P&F / observed regime</label>
+        <div class="choices" data-group="cx_regime"><button class="choice good" data-v="Mean Reversion / Chop">Mean Reversion / Chop</button><button class="choice blue" data-v="Directional / Momentum">Directional / Momentum</button><button class="choice" data-v="Transition">Transition</button><button class="choice" data-v="Unclear">Unclear</button></div>
+        <div class="grid3">
+          <div><label>ATR(14) 30s</label><input id="cx_atr" type="number" step="0.01" placeholder="optional"></div>
+          <div><label>TPO / Value Area width</label><select id="cx_va"><option>N/A</option><option>Tight</option><option>Normal</option><option>Wide</option></select></div>
+          <div><label>Price vs VWAP</label><select id="cx_vwap"><option>N/A</option><option>Above</option><option>Below</option><option>At / Around</option></select></div>
+        </div>
+        <label>Observation</label><textarea id="cx_note" placeholder="Una frase: cosa è cambiato / cosa vedi?"></textarea>
+        <div class="actions"><button class="primary" onclick="saveContext()">Save snapshot</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+      </div>
+    </section>
+
+    <section id="form_block" class="hidden sheet">
+      <div class="kicker">TRADING BLOCK</div><h1>Registra il blocco, non ogni click</h1>
+      <p class="sub">Può rappresentare 10 minuti di scalp, un singolo main trade o il MOC.</p>
+      <div class="card">
+        <div class="grid3">
+          <div><label>Start</label><input id="bl_start" type="time"></div>
+          <div><label>End</label><input id="bl_end" type="time"></div>
+          <div><label>Session phase</label><select id="bl_phase"><option>Asia</option><option selected>Europe</option><option>NY RTH</option><option>Late RTH / MOC</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label>Observed regime</label><select id="bl_regime"><option>Mean Reversion / Chop</option><option>Directional / Momentum</option><option>Transition</option><option>Unclear</option></select></div>
+          <div><label>Economic role</label><select id="bl_role"><option>Build the fund</option><option>RTH boost</option><option>MOC deployment</option><option>Other / Exploration</option></select></div>
+        </div>
+        <label>Strategic approach</label>
+        <div class="choices" data-group="bl_approach"><button class="choice" data-v="Mean Reversion">Mean Reversion</button><button class="choice" data-v="Directional">Directional</button><button class="choice" data-v="Flow discretionary">Flow discretionary</button><button class="choice" data-v="Other">Other</button></div>
+        <label>Execution</label>
+        <div class="choices" data-group="bl_exec"><button class="choice" data-v="Mostly Limit">Mostly Limit</button><button class="choice" data-v="Mostly Market">Mostly Market</button><button class="choice" data-v="Mixed">Mixed</button></div>
+
+        <label>References used</label>
+        <div class="choices multi" data-group="bl_refs" data-multi="1">
+          <button class="choice" data-v="P&F">P&F</button><button class="choice" data-v="TPO">TPO</button><button class="choice" data-v="VAH">VAH</button><button class="choice" data-v="VAL">VAL</button><button class="choice" data-v="POC">POC</button><button class="choice" data-v="VWAP">VWAP</button><button class="choice" data-v="9EMA">9EMA</button><button class="choice" data-v="Pinbar">Pinbar</button><button class="choice" data-v="Break & Retest">B&R</button><button class="choice" data-v="Rejection">Rejection</button><button class="choice" data-v="MOC">MOC</button><button class="choice" data-v="Footprint / Delta">Footprint</button>
+        </div>
+
+        <div class="grid4">
+          <div><label># trades in block</label><input id="bl_trades" type="number" step="1" min="0" value="1"></div>
+          <div><label>Max contracts</label><input id="bl_contracts" type="number" step="1" min="0" placeholder="optional"></div>
+          <div><label>Typical target (ticks)</label><input id="bl_target" type="number" step="0.5" placeholder="optional"></div>
+          <div><label>Block P&L ($)</label><input id="bl_pnl" type="number" step="0.01" placeholder="required for analysis"></div>
+        </div>
+
+        <div class="grid3">
+          <div><label>Stop / exit model</label><select id="bl_stop"><option>Not classified</option><option>No hard stop</option><option>Hard stop</option><option>Flow exit + hard stop</option><option>Time stop</option><option>Other</option></select></div>
+          <div><label>Typical / max stop (ticks)</label><input id="bl_stopticks" type="number" step="0.5" placeholder="optional"></div>
+          <div><label>Planned R factor</label><input id="bl_r" type="number" step="0.1" placeholder="optional"></div>
+        </div>
+
+        <div class="grid3">
+          <div><label>Biggest winner ($)</label><input id="bl_bigwin" type="number" step="0.01" placeholder="optional"></div>
+          <div><label>Biggest loss ($)</label><input id="bl_bigloss" type="number" step="0.01" placeholder="use negative value"></div>
+          <div><label>ATR 30s (representative)</label><input id="bl_atr" type="number" step="0.01" placeholder="optional"></div>
+        </div>
+
+        <label>How in sync did you feel? <span class="muted">(1 = lost, 5 = effortless)</span></label>
+        <div class="rangeRow"><input id="bl_sync" type="range" min="1" max="5" step="1" value="3" oninput="document.getElementById('bl_syncv').value=this.value"><input id="bl_syncv" value="3" readonly></div>
+
+        <label>Behavior flags</label>
+        <div class="choices multi" data-group="bl_behavior" data-multi="1">
+          <button class="choice" data-v="Clean / controlled">Clean / controlled</button>
+          <button class="choice" data-v="Overtrading">Overtrading</button>
+          <button class="choice" data-v="Revenge">Revenge</button>
+          <button class="choice" data-v="Averaging">Averaging</button>
+          <button class="choice" data-v="Impulsive size">Impulsive size</button>
+          <button class="choice" data-v="Hesitation">Hesitation</button>
+          <button class="choice" data-v="FOMO">FOMO</button>
+        </div>
+        <label>Block note</label><textarea id="bl_note" placeholder="Cosa rende questo blocco utile da ricordare?"></textarea>
+        <div class="actions"><button class="primary" onclick="saveBlock()">Save block</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+      </div>
+    </section>
+
+    <section id="form_pnl" class="hidden sheet">
+      <div class="kicker">P&L CHECKPOINT</div><h1>Dove siamo economicamente?</h1>
+      <div class="card">
+        <div class="grid3">
+          <div><label>Time</label><input id="pn_time" type="time"></div>
+          <div><label>Phase</label><select id="pn_phase"><option>Asia</option><option selected>Europe</option><option>NY RTH</option><option>Late RTH / MOC</option></select></div>
+          <div><label>Current P&L ($)</label><input id="pn_value" type="number" step="0.01"></div>
+        </div>
+        <label>Why are you recording this checkpoint?</label>
+        <select id="pn_reason"><option>Routine checkpoint</option><option>Before RTH</option><option>After main trade</option><option>Before MOC</option><option>New daily peak</option><option>Large drawdown / giveback</option><option>Other</option></select>
+        <label>Note</label><textarea id="pn_note" placeholder="Optional"></textarea>
+        <div class="actions"><button class="primary" onclick="savePnl()">Save checkpoint</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+      </div>
+    </section>
+
+    <section id="form_exposure" class="hidden sheet">
+      <div class="kicker">MULTI-PROP EXPOSURE</div><h1>Exposure snapshot</h1>
+      <p class="sub">Serve a studiare l’architettura degli account. Non assume che long + short equivalga a zero rischio.</p>
+      <div class="card">
+        <div class="grid2"><div><label>Time</label><input id="ex_time" type="time"></div><div><label>Purpose</label><select id="ex_purpose"><option>Observation / Test</option><option>Hedge</option><option>Opposed directional exposure</option><option>Transition / Flip</option><option>Other</option></select></div></div>
+        <label>Accounts / positions</label>
+        <div id="exRows"></div>
+        <button class="secondary" onclick="addExposureRow()">+ Add account</button>
+        <div class="sep"></div>
+        <div class="grid3">
+          <div class="metric"><div class="l">Gross contracts</div><div class="v" id="exGrossPreview">0</div></div>
+          <div class="metric"><div class="l">Net contracts</div><div class="v" id="exNetPreview">0</div></div>
+          <div class="metric"><div class="l">Opposed?</div><div class="v" id="exOppPreview">No</div></div>
+        </div>
+        <label>Rule compatibility status</label>
+        <div class="choices" data-group="ex_rules"><button class="choice good" data-v="Verified">Verified</button><button class="choice" data-v="Unknown / Not checked">Unknown / Not checked</button><button class="choice bad" data-v="Potential conflict">Potential conflict</button></div>
+        <label>Note</label><textarea id="ex_note" placeholder="Optional"></textarea>
+        <div class="actions"><button class="primary" onclick="saveExposure()">Save exposure snapshot</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+      </div>
+    </section>
+
+    <section id="form_close" class="hidden sheet">
+      <div class="kicker">END OF SESSION</div><h1>Chiudi la giornata</h1>
+      <p class="sub">Pochi dati di chiusura. L’obiettivo è capire l’ecosistema, non assegnare un voto alla giornata.</p>
+      <div class="card">
+        <div class="grid3">
+          <div><label>Final P&L ($)</label><input id="cl_pnl" type="number" step="0.01"></div>
+          <div><label>Energy spent</label><select id="cl_energy"><option value="1">1 — low</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 — exhausted</option></select></div>
+          <div><label>Overall flow sync</label><select id="cl_sync"><option value="1">1 — lost</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 — in sync</option></select></div>
+        </div>
+        <label>Did revenge trading appear?</label>
+        <div class="choices" data-group="cl_revenge"><button class="choice good" data-v="No">No</button><button class="choice bad" data-v="Yes">Yes</button><button class="choice" data-v="Unclear">Unclear</button></div>
+        <label>What did the market make easiest today?</label><textarea id="cl_easy" placeholder="Optional"></textarea>
+        <label>What created the most friction?</label><textarea id="cl_friction" placeholder="Optional"></textarea>
+        <label>One observation worth carrying forward</label><textarea id="cl_insight" placeholder="Una sola osservazione, non una nuova regola."></textarea>
+        <div class="actions"><button class="primary" onclick="closeSession()">Close session</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const KEY='trading_ecosystem_lab_v01';
+const ACTIVE_KEY='trading_ecosystem_lab_active';
+let UI={};
+let exposureRows=0;
+
+function nowTime(){return new Date().toTimeString().slice(0,5)}
+function today(){return new Date().toISOString().slice(0,10)}
+function uid(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():'id_'+Date.now()+'_'+Math.random().toString(16).slice(2)}
+function n(v){const x=parseFloat(v);return Number.isFinite(x)?x:0}
+function money(v){const x=n(v);return (x<0?'-$':'$')+Math.abs(x).toLocaleString(undefined,{maximumFractionDigits:2})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function getDB(){try{return JSON.parse(localStorage.getItem(KEY)||'{"sessions":[]}')}catch(e){return {sessions:[]}}}
+function setDB(db){localStorage.setItem(KEY,JSON.stringify(db))}
+function getActiveId(){return localStorage.getItem(ACTIVE_KEY)||''}
+function setActiveId(id){if(id)localStorage.setItem(ACTIVE_KEY,id);else localStorage.removeItem(ACTIVE_KEY)}
+function getActive(){
+  const id=getActiveId(); if(!id)return null;
+  return getDB().sessions.find(s=>s.id===id)||null;
+}
+function updateSession(updated){
+  const db=getDB(); const i=db.sessions.findIndex(s=>s.id===updated.id);
+  if(i>=0)db.sessions[i]=updated; else db.sessions.unshift(updated);
+  setDB(db);
+}
+
+function hideAll(){
+  document.querySelectorAll('main > section').forEach(x=>x.classList.add('hidden'));
+}
+function showView(v){
+  hideAll();
+  document.getElementById('view_'+v).classList.remove('hidden');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  const b=document.getElementById('nav'+v.charAt(0).toUpperCase()+v.slice(1)); if(b)b.classList.add('active');
+  if(v==='home')renderHome();
+  if(v==='data')renderAnalytics();
+  scrollTo(0,0);
+}
+function openForm(name){
+  if(name!=='start'&&!getActive()){alert('Start a session first.');return}
+  hideAll(); document.getElementById('form_'+name).classList.remove('hidden'); scrollTo(0,0);
+  const a=getActive();
+  if(name==='context'){
+    document.getElementById('cx_time').value=nowTime();
+    if(a){
+      const last=a.contexts[a.contexts.length-1];
+      if(last){document.getElementById('cx_phase').value=last.phase}
+    }
+  }
+  if(name==='block'){
+    document.getElementById('bl_start').value=nowTime();
+    document.getElementById('bl_end').value='';
+    if(a){
+      const last=a.contexts[a.contexts.length-1];
+      if(last){
+        document.getElementById('bl_phase').value=last.phase;
+        document.getElementById('bl_regime').value=last.regime||'Unclear';
+      }
+    }
+  }
+  if(name==='pnl'){document.getElementById('pn_time').value=nowTime()}
+  if(name==='exposure'){
+    document.getElementById('ex_time').value=nowTime();
+    document.getElementById('exRows').innerHTML=''; exposureRows=0; addExposureRow(); addExposureRow(); updateExposurePreview();
+  }
+  if(name==='close'){
+    const lastPnl=a&&a.pnl.length?a.pnl[a.pnl.length-1].value:0;
+    document.getElementById('cl_pnl').value=lastPnl||'';
+  }
+}
+function cancelForm(){showView('home')}
+
+document.querySelectorAll('.choices').forEach(g=>{
+  g.addEventListener('click',e=>{
+    const b=e.target.closest('.choice'); if(!b)return;
+    const multi=g.dataset.multi==='1';
+    if(!multi)g.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));
+    b.classList.toggle('active');
+    if(!multi && !b.classList.contains('active')) b.classList.add('active');
+  })
+})
+function choiceVal(group){
+  const g=document.querySelector(`[data-group="${group}"]`);
+  if(!g)return '';
+  if(g.dataset.multi==='1')return [...g.querySelectorAll('.choice.active')].map(b=>b.dataset.v);
+  const b=g.querySelector('.choice.active'); return b?b.dataset.v:'';
+}
+function clearChoice(group){
+  const g=document.querySelector(`[data-group="${group}"]`); if(g)g.querySelectorAll('.choice').forEach(b=>b.classList.remove('active'));
+}
+
+function startSession(){
+  const db=getDB();
+  const s={
+    id:uid(),date:document.getElementById('st_date').value||today(),market:document.getElementById('st_market').value||'ES',
+    dll:n(document.getElementById('st_dll').value),wll:n(document.getElementById('st_wll').value),
+    maxGiveback:n(document.getElementById('st_giveback').value),props:document.getElementById('st_props').value.trim(),
+    startNote:document.getElementById('st_note').value.trim(),createdAt:new Date().toISOString(),status:'active',
+    contexts:[],blocks:[],pnl:[],exposures:[],review:null
+  };
+  db.sessions.unshift(s); setDB(db); setActiveId(s.id);
+  showView('home');
+}
+function saveContext(){
+  const s=getActive(); if(!s)return;
+  const x={id:uid(),type:'context',time:document.getElementById('cx_time').value||nowTime(),phase:document.getElementById('cx_phase').value,
+    expectation:choiceVal('cx_expect'),regime:choiceVal('cx_regime')||'Unclear',
+    atr:n(document.getElementById('cx_atr').value)||null,vaWidth:document.getElementById('cx_va').value,
+    vwap:document.getElementById('cx_vwap').value,note:document.getElementById('cx_note').value.trim(),createdAt:new Date().toISOString()};
+  s.contexts.push(x); updateSession(s);
+  ['cx_expect','cx_regime'].forEach(clearChoice); document.getElementById('cx_note').value=''; document.getElementById('cx_atr').value='';
+  showView('home');
+}
+function saveBlock(){
+  const s=getActive(); if(!s)return;
+  const x={id:uid(),type:'block',start:document.getElementById('bl_start').value||nowTime(),end:document.getElementById('bl_end').value,
+    phase:document.getElementById('bl_phase').value,regime:document.getElementById('bl_regime').value,
+    role:document.getElementById('bl_role').value,approach:choiceVal('bl_approach'),execution:choiceVal('bl_exec'),
+    refs:choiceVal('bl_refs'),trades:Math.max(0,Math.round(n(document.getElementById('bl_trades').value))),
+    maxContracts:n(document.getElementById('bl_contracts').value)||null,targetTicks:n(document.getElementById('bl_target').value)||null,
+    pnl:n(document.getElementById('bl_pnl').value),stopModel:document.getElementById('bl_stop').value,
+    stopTicks:n(document.getElementById('bl_stopticks').value)||null,rFactor:n(document.getElementById('bl_r').value)||null,
+    biggestWin:n(document.getElementById('bl_bigwin').value)||null,biggestLoss:n(document.getElementById('bl_bigloss').value)||null,
+    atr:n(document.getElementById('bl_atr').value)||null,sync:n(document.getElementById('bl_sync').value),
+    behavior:choiceVal('bl_behavior'),note:document.getElementById('bl_note').value.trim(),createdAt:new Date().toISOString()};
+  s.blocks.push(x); updateSession(s);
+  ['bl_approach','bl_exec','bl_refs','bl_behavior'].forEach(clearChoice);
+  ['bl_end','bl_contracts','bl_target','bl_pnl','bl_stopticks','bl_r','bl_bigwin','bl_bigloss','bl_atr','bl_note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('bl_trades').value='1';document.getElementById('bl_sync').value='3';document.getElementById('bl_syncv').value='3';
+  showView('home');
+}
+function savePnl(){
+  const s=getActive(); if(!s)return;
+  const x={id:uid(),type:'pnl',time:document.getElementById('pn_time').value||nowTime(),phase:document.getElementById('pn_phase').value,
+    value:n(document.getElementById('pn_value').value),reason:document.getElementById('pn_reason').value,
+    note:document.getElementById('pn_note').value.trim(),createdAt:new Date().toISOString()};
+  s.pnl.push(x); updateSession(s); document.getElementById('pn_value').value='';document.getElementById('pn_note').value=''; showView('home');
+}
+
+function addExposureRow(){
+  exposureRows++;
+  const id=exposureRows;
+  const d=document.createElement('div'); d.className='expRow'; d.dataset.row=id;
+  d.innerHTML=`<div><label>Prop / Account</label><input class="ex_prop" placeholder="Topstep A"></div>
+  <div><label>Direction</label><select class="ex_dir" onchange="updateExposurePreview()"><option value="LONG">LONG</option><option value="SHORT">SHORT</option><option value="FLAT">FLAT</option></select></div>
+  <div><label>Qty</label><input class="ex_qty" type="number" min="0" step="1" value="0" oninput="updateExposurePreview()"></div>
+  <div><label>Entry</label><input class="ex_entry" type="number" step="0.25" placeholder="optional"></div>
+  <div class="removeCell"><label>&nbsp;</label><button class="iconbtn" onclick="this.closest('.expRow').remove();updateExposurePreview()">×</button></div>`;
+  document.getElementById('exRows').appendChild(d);
+}
+function exposurePositions(){
+  return [...document.querySelectorAll('#exRows .expRow')].map(r=>({
+    prop:r.querySelector('.ex_prop').value.trim(),direction:r.querySelector('.ex_dir').value,
+    qty:Math.max(0,Math.round(n(r.querySelector('.ex_qty').value))),entry:n(r.querySelector('.ex_entry').value)||null
+  })).filter(x=>x.prop||x.qty);
+}
+function exposureMath(pos){
+  let gross=0,net=0,long=0,short=0;
+  pos.forEach(p=>{gross+=p.qty;if(p.direction==='LONG'){net+=p.qty;long+=p.qty}else if(p.direction==='SHORT'){net-=p.qty;short+=p.qty}});
+  return {gross,net,opposed:long>0&&short>0};
+}
+function updateExposurePreview(){
+  const m=exposureMath(exposurePositions());
+  document.getElementById('exGrossPreview').textContent=m.gross;
+  document.getElementById('exNetPreview').textContent=(m.net>0?'+':'')+m.net;
+  document.getElementById('exOppPreview').textContent=m.opposed?'Yes':'No';
+}
+function saveExposure(){
+  const s=getActive(); if(!s)return;
+  const positions=exposurePositions(), m=exposureMath(positions);
+  const x={id:uid(),type:'exposure',time:document.getElementById('ex_time').value||nowTime(),purpose:document.getElementById('ex_purpose').value,
+    positions,gross:m.gross,net:m.net,opposed:m.opposed,rules:choiceVal('ex_rules')||'Unknown / Not checked',
+    note:document.getElementById('ex_note').value.trim(),createdAt:new Date().toISOString()};
+  s.exposures.push(x);updateSession(s);clearChoice('ex_rules');document.getElementById('ex_note').value='';showView('home');
+}
+function closeSession(){
+  const s=getActive();if(!s)return;
+  const review={finalPnl:n(document.getElementById('cl_pnl').value),energy:n(document.getElementById('cl_energy').value),
+    sync:n(document.getElementById('cl_sync').value),revenge:choiceVal('cl_revenge')||'Unclear',
+    easy:document.getElementById('cl_easy').value.trim(),friction:document.getElementById('cl_friction').value.trim(),
+    insight:document.getElementById('cl_insight').value.trim(),closedAt:new Date().toISOString()};
+  s.review=review;s.status='closed';updateSession(s);setActiveId('');
+  clearChoice('cl_revenge');['cl_pnl','cl_easy','cl_friction','cl_insight'].forEach(id=>document.getElementById(id).value='');
+  showView('data');
+}
+
+function allTimeline(s){
+  const a=[];
+  s.contexts.forEach(x=>a.push({...x,_sort:x.time||'00:00'}));
+  s.blocks.forEach(x=>a.push({...x,_sort:x.start||'00:00'}));
+  s.pnl.forEach(x=>a.push({...x,_sort:x.time||'00:00'}));
+  s.exposures.forEach(x=>a.push({...x,_sort:x.time||'00:00'}));
+  return a.sort((x,y)=>x._sort.localeCompare(y._sort));
+}
+function renderHome(){
+  const s=getActive(), no=document.getElementById('noSession'), ac=document.getElementById('activeSession');
+  if(!s){no.classList.remove('hidden');ac.classList.add('hidden');return}
+  no.classList.add('hidden');ac.classList.remove('hidden');
+  document.getElementById('activeTitle').textContent=`${s.market} · ${s.date}`;
+  document.getElementById('activeMeta').textContent=[s.props,`DLL ${money(s.dll)}`,s.maxGiveback?`giveback ${money(s.maxGiveback)}`:''].filter(Boolean).join(' · ');
+  const current=s.pnl.length?s.pnl[s.pnl.length-1].value:0;
+  const vals=[0,...s.pnl.map(x=>x.value)]; const peak=Math.max(...vals);
+  const floor=s.maxGiveback?peak-s.maxGiveback:null;
+  document.getElementById('currentPnl').textContent=money(current);
+  document.getElementById('floorText').textContent=floor===null?'No giveback rule':'theoretical peak floor '+money(floor);
+  const lastCx=s.contexts[s.contexts.length-1];
+  document.getElementById('mRegime').textContent=lastCx?(lastCx.regime.includes('Mean')?'MR':lastCx.regime.includes('Directional')?'DIR':lastCx.regime):'—';
+  document.getElementById('mTrades').textContent=s.blocks.reduce((a,b)=>a+n(b.trades),0);
+  document.getElementById('mPeak').textContent=money(peak);
+  const lastEx=s.exposures[s.exposures.length-1];document.getElementById('mGross').textContent=lastEx?lastEx.gross:0;
+  const tl=allTimeline(s).slice(-10).reverse();
+  document.getElementById('todayTimeline').innerHTML=tl.length?tl.map(x=>{
+    if(x.type==='context')return `<div class="titem"><div class="time">${esc(x.time)} · ${esc(x.phase)}</div><div class="title">Context → ${esc(x.regime)}</div><div class="detail">${esc([x.expectation,x.atr?('ATR '+x.atr):'',x.vaWidth!=='N/A'?('VA '+x.vaWidth):'',x.note].filter(Boolean).join(' · '))}</div></div>`;
+    if(x.type==='block')return `<div class="titem"><div class="time">${esc(x.start)}${x.end?'–'+esc(x.end):''} · ${esc(x.phase)}</div><div class="title">Trading block · ${esc(x.role)} · ${money(x.pnl)}</div><div class="detail">${esc([x.regime,x.approach,x.execution,(x.trades||0)+' trades','sync '+x.sync+'/5',x.note].filter(Boolean).join(' · '))}</div></div>`;
+    if(x.type==='pnl')return `<div class="titem"><div class="time">${esc(x.time)} · ${esc(x.phase)}</div><div class="title">P&L checkpoint → ${money(x.value)}</div><div class="detail">${esc([x.reason,x.note].filter(Boolean).join(' · '))}</div></div>`;
+    if(x.type==='exposure')return `<div class="titem"><div class="time">${esc(x.time)}</div><div class="title">Exposure · gross ${x.gross} · net ${x.net>0?'+':''}${x.net}</div><div class="detail">${esc([x.opposed?'opposed exposures':'one-sided',x.rules,x.note].filter(Boolean).join(' · '))}</div></div>`;
+  }).join(''):'<div class="empty">No snapshots yet.</div>';
+}
+
+function flattenBlocks(){
+  return getDB().sessions.flatMap(s=>s.blocks.map(b=>({...b,sessionId:s.id,date:s.date,market:s.market,status:s.status})));
+}
+function agg(rows,keyFn){
+  const m={};
+  rows.forEach(r=>{const k=keyFn(r)||'Unclassified'; if(!m[k])m[k]={blocks:0,trades:0,pnl:0,sync:0,syncN:0,mr:0,dir:0};
+    const a=m[k];a.blocks++;a.trades+=n(r.trades);a.pnl+=n(r.pnl);if(r.sync){a.sync+=n(r.sync);a.syncN++}
+    if(r.approach==='Mean Reversion')a.mr++; if(r.approach==='Directional')a.dir++;
+  });return m;
+}
+function rowsHtml(m,kind){
+  const entries=Object.entries(m);
+  if(!entries.length)return `<tr><td colspan="7" class="muted">No data yet.</td></tr>`;
+  return entries.map(([k,a])=>{
+    const avg=a.blocks?a.pnl/a.blocks:0, sync=a.syncN?(a.sync/a.syncN).toFixed(1):'—';
+    if(kind==='regime')return `<tr><td>${esc(k)}</td><td>${a.blocks}</td><td>${a.trades}</td><td>${money(a.pnl)}</td><td>${money(avg)}</td><td>${sync}</td></tr>`;
+    if(kind==='phase')return `<tr><td>${esc(k)}</td><td>${a.blocks}</td><td>${a.trades}</td><td>${money(a.pnl)}</td><td>${money(avg)}</td><td>${a.mr}</td><td>${a.dir}</td></tr>`;
+    if(kind==='role')return `<tr><td>${esc(k)}</td><td>${a.blocks}</td><td>${a.trades}</td><td>${money(a.pnl)}</td><td>${money(avg)}</td></tr>`;
+    if(kind==='exec')return `<tr><td>${esc(k)}</td><td>${a.blocks}</td><td>${a.trades}</td><td>${money(a.pnl)}</td><td>${sync}</td></tr>`;
+  }).join('');
+}
+function renderAnalytics(){
+  const db=getDB(), blocks=flattenBlocks(), closed=db.sessions.filter(s=>s.status==='closed');
+  document.getElementById('aSessions').textContent=db.sessions.length;
+  document.getElementById('aBlocks').textContent=blocks.length;
+  document.getElementById('aTrades').textContent=blocks.reduce((a,b)=>a+n(b.trades),0);
+  document.getElementById('aPnl').textContent=money(closed.reduce((a,s)=>a+n(s.review?.finalPnl),0));
+  document.getElementById('regimeTable').innerHTML=rowsHtml(agg(blocks,b=>b.regime),'regime');
+  document.getElementById('phaseTable').innerHTML=rowsHtml(agg(blocks,b=>b.phase),'phase');
+  document.getElementById('roleTable').innerHTML=rowsHtml(agg(blocks,b=>b.role),'role');
+  document.getElementById('execTable').innerHTML=rowsHtml(agg(blocks,b=>b.execution),'exec');
+
+  const outside=blocks.filter(b=>b.phase==='Asia'||b.phase==='Europe');
+  const rth=blocks.filter(b=>b.phase==='NY RTH'||b.phase==='Late RTH / MOC');
+  const stat=(arr,approach)=>{const x=arr.filter(b=>b.approach===approach);return {n:x.length,p:x.reduce((a,b)=>a+n(b.pnl),0),t:x.reduce((a,b)=>a+n(b.trades),0)}};
+  const om=stat(outside,'Mean Reversion'), od=stat(outside,'Directional'), rm=stat(rth,'Mean Reversion'), rd=stat(rth,'Directional');
+  document.getElementById('hypothesisBox').innerHTML=`
+    <div class="grid2">
+      <div class="metric"><div class="l">Outside RTH · Mean Reversion</div><div class="v">${om.n} blocks</div><div class="hint">${om.t} trades · ${money(om.p)}</div></div>
+      <div class="metric"><div class="l">Outside RTH · Directional</div><div class="v">${od.n} blocks</div><div class="hint">${od.t} trades · ${money(od.p)}</div></div>
+      <div class="metric"><div class="l">RTH/MOC · Mean Reversion</div><div class="v">${rm.n} blocks</div><div class="hint">${rm.t} trades · ${money(rm.p)}</div></div>
+      <div class="metric"><div class="l">RTH/MOC · Directional</div><div class="v">${rd.n} blocks</div><div class="hint">${rd.t} trades · ${money(rd.p)}</div></div>
+    </div>`;
+
+  const flags={};blocks.forEach(b=>(b.behavior||[]).forEach(f=>{if(!flags[f])flags[f]={n:0,p:0};flags[f].n++;flags[f].p+=n(b.pnl)}));
+  document.getElementById('behaviorBox').innerHTML=Object.keys(flags).length?Object.entries(flags).map(([k,v])=>`<span class="badge">${esc(k)} · ${v.n} blocks · ${money(v.p)}</span>`).join(''):'<span class="muted">No behavior flags yet.</span>';
+
+  document.getElementById('sessionList').innerHTML=db.sessions.length?db.sessions.map(s=>{
+    const trades=s.blocks.reduce((a,b)=>a+n(b.trades),0), pnl=s.status==='closed'?n(s.review?.finalPnl):(s.pnl.length?s.pnl[s.pnl.length-1].value:0);
+    const peak=Math.max(0,...s.pnl.map(x=>x.value));
+    return `<div class="sessionItem"><div class="sessionHead"><div><b>${esc(s.date)} · ${esc(s.market)}</b><div class="muted">${esc(s.status)} · ${trades} trades · ${s.blocks.length} blocks · ${s.contexts.length} context snapshots</div></div><div><b>${money(pnl)}</b><div class="muted">peak ${money(peak)}</div></div></div>${s.review?.insight?`<div class="hint" style="margin-top:7px">${esc(s.review.insight)}</div>`:''}</div>`
+  }).join(''):'<div class="empty">No sessions yet.</div>';
+}
+
+function exportJSON(){
+  const data={version:'0.1',exportedAt:new Date().toISOString(),...getDB()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='trading_ecosystem_lab_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function csvCell(x){const s=Array.isArray(x)?x.join('|'):String(x??'');return '"'+s.replaceAll('"','""')+'"'}
+function exportBlocksCSV(){
+  const rows=flattenBlocks(), cols=['date','market','phase','regime','role','approach','execution','refs','trades','maxContracts','targetTicks','pnl','stopModel','stopTicks','rFactor','biggestWin','biggestLoss','atr','sync','behavior','note'];
+  const csv=[cols.join(','),...rows.map(r=>cols.map(c=>csvCell(r[c])).join(','))].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='trading_ecosystem_blocks.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function importJSON(e){
+  const f=e.target.files[0]; if(!f)return;
+  const reader=new FileReader();reader.onload=()=>{
+    try{
+      const j=JSON.parse(reader.result), sessions=j.sessions;
+      if(!Array.isArray(sessions))throw new Error('Invalid file');
+      if(!confirm(`Import ${sessions.length} sessions and replace current local data?`))return;
+      setDB({sessions});setActiveId('');showView('data');
+    }catch(err){alert('Import failed: '+err.message)}
+  };reader.readAsText(f);e.target.value='';
+}
+function resetAll(){
+  if(confirm('This deletes all Trading Ecosystem Lab data stored in this browser. Continue?')){
+    localStorage.removeItem(KEY);localStorage.removeItem(ACTIVE_KEY);showView('home');
+  }
+}
+
+document.getElementById('st_date').value=today();
+showView('home');
+</script>
+</body>
+</html>
