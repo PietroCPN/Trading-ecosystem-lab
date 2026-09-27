@@ -116,7 +116,7 @@ input[type=range]{padding:0;border:0;background:transparent}
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.1 — data collection, not a journal</div>
+      <div class="ver">v0.2 — simplified data collection</div>
     </div>
     <div class="nav">
       <button id="navHome" onclick="showView('home')">Today</button>
@@ -158,7 +158,7 @@ input[type=range]{padding:0;border:0;background:transparent}
           <div class="metric"><div class="l">Regime now</div><div class="v" id="mRegime">—</div></div>
           <div class="metric"><div class="l">Trades logged</div><div class="v" id="mTrades">0</div></div>
           <div class="metric"><div class="l">Peak P&L</div><div class="v" id="mPeak">$0</div></div>
-          <div class="metric"><div class="l">Gross exposure</div><div class="v" id="mGross">0</div></div>
+          <div class="metric"><div class="l">Context snapshots</div><div class="v" id="mGross">0</div></div>
         </div>
 
         <div class="kicker" style="margin-top:20px">QUICK CAPTURE</div>
@@ -175,9 +175,9 @@ input[type=range]{padding:0;border:0;background:transparent}
             <b>P&L Checkpoint</b>
             <span>Traccia Build → Boost → Deploy e il giveback dal peak.</span>
           </div>
-          <div class="card quick" onclick="openForm('exposure')">
-            <b>Multi-Prop Exposure</b>
-            <span>Fotografa long/short simultanei, gross e net exposure.</span>
+          <div class="card quick" style="opacity:.45;cursor:not-allowed" aria-disabled="true">
+            <b>Multi-Prop Exposure <span class="badge">LATER</span></b>
+            <span>Modulo mantenuto nell’app ma temporaneamente inibito.</span>
           </div>
         </div>
 
@@ -312,9 +312,9 @@ input[type=range]{padding:0;border:0;background:transparent}
         <p class="hint">Working principle: maximum freedom inside a hard risk box. Restano da studiare stop, R factor, micro-scalping, MOC e uso del gain.</p>
       </div>
 
-      <div class="card">
-        <h3>Account / Exposure architecture</h3>
-        <p class="hint">Possibilità da studiare: esposizioni concordi o contrapposte su più prop firm, ad esempio 2 LONG su Prop A e 2 SHORT su Prop B. L’app registra gross e net exposure e se la compatibilità con le regole della prop firm è stata verificata.</p>
+      <div class="card" style="opacity:.55">
+        <h3>Account / Exposure architecture <span class="badge">LATER</span></h3>
+        <p class="hint">Tema mantenuto nel framework per non perderlo, ma volutamente escluso dalla raccolta dati attuale. Verrà riattivato solo quando avremo una ragione concreta per studiarlo.</p>
       </div>
     </section>
 
@@ -439,8 +439,8 @@ input[type=range]{padding:0;border:0;background:transparent}
     </section>
 
     <section id="form_exposure" class="hidden sheet">
-      <div class="kicker">MULTI-PROP EXPOSURE</div><h1>Exposure snapshot</h1>
-      <p class="sub">Serve a studiare l’architettura degli account. Non assume che long + short equivalga a zero rischio.</p>
+      <div class="kicker">MULTI-PROP EXPOSURE — TEMPORARILY DISABLED</div><h1>Exposure snapshot</h1>
+      <p class="sub">Modulo mantenuto per non perdere il tema, ma non ancora attivo nella fase corrente del progetto.</p>
       <div class="card">
         <div class="grid2"><div><label>Time</label><input id="ex_time" type="time"></div><div><label>Purpose</label><select id="ex_purpose"><option>Observation / Test</option><option>Hedge</option><option>Opposed directional exposure</option><option>Transition / Flip</option><option>Other</option></select></div></div>
         <label>Accounts / positions</label>
@@ -518,6 +518,7 @@ function showView(v){
   scrollTo(0,0);
 }
 function openForm(name){
+  if(name==='exposure'){alert('Multi-Prop Exposure è temporaneamente inibito. Lo riattiveremo più avanti.');return}
   if(name!=='start'&&!getActive()){alert('Start a session first.');return}
   hideAll(); document.getElementById('form_'+name).classList.remove('hidden'); scrollTo(0,0);
   const a=getActive();
@@ -688,7 +689,7 @@ function renderHome(){
   document.getElementById('mRegime').textContent=lastCx?(lastCx.regime.includes('Mean')?'MR':lastCx.regime.includes('Directional')?'DIR':lastCx.regime):'—';
   document.getElementById('mTrades').textContent=s.blocks.reduce((a,b)=>a+n(b.trades),0);
   document.getElementById('mPeak').textContent=money(peak);
-  const lastEx=s.exposures[s.exposures.length-1];document.getElementById('mGross').textContent=lastEx?lastEx.gross:0;
+  document.getElementById('mGross').textContent=s.contexts.length;
   const tl=allTimeline(s).slice(-10).reverse();
   document.getElementById('todayTimeline').innerHTML=tl.length?tl.map(x=>{
     if(x.type==='context')return `<div class="titem"><div class="time">${esc(x.time)} · ${esc(x.phase)}</div><div class="title">Context → ${esc(x.regime)}</div><div class="detail">${esc([x.expectation,x.atr?('ATR '+x.atr):'',x.vaWidth!=='N/A'?('VA '+x.vaWidth):'',x.note].filter(Boolean).join(' · '))}</div></div>`;
@@ -753,7 +754,7 @@ function renderAnalytics(){
 }
 
 function exportJSON(){
-  const data={version:'0.1',exportedAt:new Date().toISOString(),...getDB()};
+  const data={version:'0.2',exportedAt:new Date().toISOString(),...getDB()};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');
   a.href=URL.createObjectURL(blob);a.download='trading_ecosystem_lab_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
