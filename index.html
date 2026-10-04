@@ -7,9 +7,9 @@
 <title>Trading Ecosystem Lab</title>
 <style>
 :root{
-  --bg:#0b0d10;--panel:#12161b;--panel2:#171c22;--line:#29313a;
-  --text:#f4f6f8;--muted:#98a2ad;--accent:#f3b43f;--good:#62d18b;
-  --bad:#ff7171;--blue:#6aa9ff;--violet:#b18cff;--radius:16px;
+  --bg:#07080a;--panel:#101216;--panel2:#15181d;--line:#2a2f36;
+  --text:#f6f7f9;--muted:#9098a3;--accent:#ff304f;--accent2:#ff6a3d;--good:#62d18b;
+  --bad:#ff5f6d;--blue:#6aa9ff;--violet:#b18cff;--radius:12px;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -100,6 +100,719 @@ input[type=range]{padding:0;border:0;background:transparent}
 .flowbox{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0e1216}
 .flowbox b{display:block;font-size:12px;margin-bottom:5px}
 .flowbox span{font-size:11px;color:var(--muted);line-height:1.4}
+
+body{
+  background:
+    radial-gradient(circle at 85% 0%, rgba(255,48,79,.10), transparent 28%),
+    linear-gradient(180deg,#07080a 0%,#0a0c0f 100%);
+}
+.top{
+  border-bottom:1px solid rgba(255,48,79,.38);
+}
+.top:after{
+  content:"";
+  position:absolute;
+  left:0;bottom:-1px;
+  width:150px;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.brand{
+  color:#fff;
+  text-shadow:0 0 18px rgba(255,48,79,.25);
+}
+.card{
+  position:relative;
+  overflow:hidden;
+}
+.card:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;
+  width:3px;height:100%;
+  background:linear-gradient(180deg,var(--accent),transparent 80%);
+  opacity:.75;
+}
+.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  box-shadow:0 0 22px rgba(255,48,79,.14);
+}
+.primary:hover{filter:brightness(1.08)}
+.nav button.active{
+  border-color:var(--accent);
+  color:#fff;
+  box-shadow:inset 0 -2px 0 var(--accent);
+}
+.obsCard{
+  border:1px solid #2c323a;
+  background:linear-gradient(135deg,#101216 0%,#0c0e11 100%);
+  clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  padding:14px 15px 14px 16px;
+  margin:10px 0;
+  position:relative;
+}
+.obsCard:after{
+  content:"";
+  position:absolute;
+  top:0;right:0;
+  width:28px;height:2px;
+  background:var(--accent);
+}
+.obsMeta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+}
+.obsLabel{
+  font-size:10px;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:850;
+}
+.obsActions{
+  display:flex;
+  gap:6px;
+  flex-shrink:0;
+}
+.obsIcon{
+  width:30px;height:30px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #343a43;
+  background:#111419;
+  color:#cdd3da;
+  border-radius:7px;
+  cursor:pointer;
+  padding:0;
+}
+.obsIcon:hover{
+  color:#fff;
+  border-color:var(--accent);
+  box-shadow:0 0 14px rgba(255,48,79,.18);
+}
+.obsText{
+  line-height:1.55;
+  color:#eef1f4;
+}
+.obsEdit{
+  margin-top:8px;
+}
+.labTitle{
+  margin:4px 0 18px;
+  font-size:28px;
+  letter-spacing:.04em;
+  font-weight:900;
+}
+.labTitle span{
+  color:var(--accent);
+}
+
+
+.startCompact{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  align-items:end;
+}
+.startCompact label{margin-top:0}
+.csvDrop{
+  border:1px dashed #4a525d;
+  background:#0b0e12;
+  border-radius:10px;
+  padding:12px;
+  margin-top:14px;
+}
+.csvDrop.loaded{
+  border-color:var(--accent);
+  box-shadow:0 0 18px rgba(255,48,79,.08);
+}
+.csvTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.csvMeta{
+  margin-top:8px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.csvMeta .badge{background:#111419}
+
+body, button, input, select, textarea, table, th, td, label, .hint, .muted, .sub, .badge, .obsText {
+  text-transform: uppercase;
+}
+em, i, .italic { font-style: normal !important; }
+input::placeholder, textarea::placeholder { text-transform: uppercase; }
+.tradeTableWrap{
+  margin-top:14px;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#0b0e12;
+}
+.tradeTable{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1250px;
+  font-size:11px;
+}
+.tradeTable th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#12161b;
+  color:#aab2bc;
+  letter-spacing:.05em;
+  padding:9px 8px;
+  border-bottom:1px solid var(--line);
+}
+.tradeTable td{
+  padding:7px 8px;
+  border-bottom:1px solid #222830;
+  vertical-align:middle;
+}
+.tradeTable tr:last-child td{border-bottom:0}
+.tradeTable input,
+.tradeTable select{
+  padding:7px 8px;
+  font-size:11px;
+  min-width:90px;
+}
+.sessionTag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:72px;
+  padding:5px 7px;
+  border-radius:7px;
+  font-weight:850;
+  letter-spacing:.06em;
+  border:1px solid transparent;
+}
+.session-asian{
+  background:#30343a;
+  color:#d9dde2;
+  border-color:#4a5058;
+}
+.session-london{
+  background:#5a4914;
+  color:#ffe58a;
+  border-color:#8d7520;
+}
+.session-ny{
+  background:#163f2a;
+  color:#a7efc3;
+  border-color:#2b6a48;
+}
+.tradePositive{color:#86e6a8;font-weight:800}
+.tradeNegative{color:#ff8a95;font-weight:800}
+.csvFilterNote{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+}
+
+
+.startCard{
+  overflow:visible !important;
+  z-index:20;
+}
+.datePickerWrap{
+  position:relative;
+  z-index:100;
+}
+.dateDisplay{
+  cursor:pointer;
+  background:#0d1115;
+}
+.calendarPopup{
+  position:absolute;
+  top:calc(100% + 7px);
+  left:0;
+  z-index:9999;
+  width:min(300px, calc(100vw - 42px));
+  background:#0d1014;
+  border:1px solid #3a414a;
+  border-radius:10px;
+  box-shadow:0 18px 45px rgba(0,0,0,.55),0 0 18px rgba(255,48,79,.12);
+  padding:10px;
+}
+.calHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+.calTitle{
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:.06em;
+}
+.calNav{
+  width:30px;height:30px;
+  border:1px solid #333a43;
+  border-radius:7px;
+  background:#12161b;
+  color:#fff;
+  cursor:pointer;
+}
+.calGrid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+.calDow{
+  font-size:9px;
+  color:#79838e;
+  text-align:center;
+  padding:4px 0;
+}
+.calDay{
+  height:31px;
+  border:1px solid transparent;
+  border-radius:7px;
+  background:transparent;
+  color:#d9dee5;
+  cursor:pointer;
+  font-size:11px;
+}
+.calDay:hover{
+  border-color:#555e69;
+  background:#151a20;
+}
+.calDay.today{border-color:#545d68}
+.calDay.selected{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  font-weight:850;
+}
+.calDay.outside{
+  color:#414851;
+  cursor:default;
+}
+
+
+.screenshotPanel{
+  margin-top:14px;
+  border:1px dashed #4a525d;
+  border-radius:12px;
+  background:linear-gradient(180deg,#0c0f13 0%,#090b0e 100%);
+  padding:14px;
+  outline:none;
+}
+.screenshotPanel:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent) inset,0 0 18px rgba(255,48,79,.10);
+}
+.screenshotHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.screenshotDrop{
+  min-height:132px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  gap:8px;
+  cursor:text;
+}
+.screenshotDrop b{
+  letter-spacing:.06em;
+}
+.screenshotPreviewWrap{
+  margin-top:12px;
+  position:relative;
+}
+.screenshotPreview{
+  width:100%;
+  max-height:520px;
+  object-fit:contain;
+  display:block;
+  border:1px solid #2c323a;
+  border-radius:10px;
+  background:#050607;
+}
+.screenshotToolbar{
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  margin-top:9px;
+}
+.chartLegend{
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid #242a31;
+  color:#858f9a;
+  font-size:10px;
+  line-height:1.55;
+}
+
+
+.prepCard{overflow:visible}
+.prepStep{
+  color:var(--accent);
+  font-size:10px;
+  letter-spacing:.13em;
+  font-weight:900;
+  margin-bottom:7px;
+}
+.prepChecklist{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+.prepCheck{
+  width:100%;
+  border:1px solid #30363e;
+  background:#0c0f13;
+  color:#e9edf1;
+  border-radius:10px;
+  padding:11px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+  cursor:pointer;
+}
+.prepCheck:hover{border-color:#505863}
+.prepCheck.checked{
+  border-color:#3c8058;
+  background:#112219;
+}
+.prepCheck .checkBox{
+  width:22px;height:22px;
+  border:1px solid #4b535d;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:transparent;
+  flex-shrink:0;
+}
+.prepCheck.checked .checkBox{
+  background:#1d6b3b;
+  border-color:#48a46b;
+  color:#fff;
+}
+.prepCheck small{
+  color:#9099a4;
+  font-size:9px;
+}
+.prepCheck.riskHyp{
+  border-color:#725a26;
+}
+.analysisChain{
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  margin:14px 0;
+}
+.analysisChain>div:not(.chainArrow){
+  border:1px solid #30363e;
+  background:#0b0e12;
+  border-radius:10px;
+  padding:12px 8px;
+  text-align:center;
+}
+.analysisChain b{
+  display:block;
+  font-size:12px;
+  color:#fff;
+}
+.analysisChain span{
+  display:block;
+  color:#8e98a3;
+  font-size:9px;
+  margin-top:4px;
+}
+.chainArrow{color:var(--accent);font-weight:900}
+.regimeButtons{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+.regimeBtn{
+  min-height:54px;
+  border:1px solid #333a43;
+  background:#0c0f13;
+  color:#dfe4e9;
+  border-radius:10px;
+  font-weight:850;
+  cursor:pointer;
+}
+.regimeBtn.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent) inset,0 0 18px rgba(255,48,79,.12);
+  color:#fff;
+}
+.regimeBtn.consolidation.selected{
+  border-color:#d5ab35;
+  box-shadow:0 0 0 1px #d5ab35 inset,0 0 18px rgba(213,171,53,.12);
+}
+.regimeBtn.trend.selected{
+  border-color:#4f9bff;
+  box-shadow:0 0 0 1px #4f9bff inset,0 0 18px rgba(79,155,255,.12);
+}
+.comboPanel{
+  border:1px solid rgba(255,48,79,.65);
+  background:
+    linear-gradient(135deg,rgba(255,48,79,.12),rgba(255,106,61,.04)),
+    #0c0e11;
+  border-radius:12px;
+  padding:13px;
+  box-shadow:0 0 22px rgba(255,48,79,.07);
+}
+.comboTitle{
+  color:#ff5a70;
+  font-size:10px;
+  letter-spacing:.13em;
+  font-weight:900;
+  margin-bottom:9px;
+}
+.comboGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.comboItem{
+  min-height:56px;
+  border:1px solid #3b3035;
+  border-radius:9px;
+  background:#111216;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:12px;
+}
+.comboItem b{color:#fff}
+.comboItem span{color:var(--accent);font-weight:900}
+.prepFooter{
+  border-top:1px solid #2a3037;
+  margin-top:14px;
+  padding-top:12px;
+}
+.prepStatus{
+  color:#8f99a4;
+  font-size:10px;
+  letter-spacing:.05em;
+}
+.prepStatus.ready{color:#78d99b}
+.prepStartDisabled{
+  opacity:.35;
+  pointer-events:none;
+}
+
+.captureDateOnly{grid-template-columns:minmax(180px,320px)}
+.captureCta{overflow:visible}
+.liveSessionCard{border-color:#39424d}
+.emotionButtons{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+  margin-top:7px;
+}
+.emotionBtn{
+  border:1px solid #333a43;
+  background:#0c0f13;
+  color:#dfe4e9;
+  min-height:44px;
+  border-radius:9px;
+  font-weight:800;
+  cursor:pointer;
+}
+.emotionBtn.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent) inset;
+  color:#fff;
+}
+.regimeBtn.positive.selected{
+  border-color:#42a86c;
+  box-shadow:0 0 0 1px #42a86c inset;
+}
+.regimeBtn.negative.selected{
+  border-color:#d5535f;
+  box-shadow:0 0 0 1px #d5535f inset;
+}
+.livePlaybook{
+  border:1px solid #303740;
+  background:#0d1014;
+  border-radius:12px;
+  padding:14px;
+  margin:12px 0;
+}
+.livePlaybook h3{margin-bottom:10px}
+.guidedRow{
+  padding:10px 0;
+  border-top:1px solid #242a31;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.guidedRow:first-child{border-top:0}
+.guidedMeta{color:var(--muted);font-size:11px;margin-top:4px}
+
+.newsCheck{
+  border-color:#3e4c5e;
+}
+.analysisFlowPro{
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto 1fr;
+  gap:10px;
+  align-items:center;
+  margin:18px 0;
+}
+.analysisNode{
+  position:relative;
+  min-height:132px;
+  border:1px solid #343c46;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.025),transparent),
+    #0a0d11;
+  border-radius:12px;
+  padding:16px 12px 13px;
+  text-align:center;
+  overflow:hidden;
+}
+.analysisNode:before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:.75;
+}
+.nodeIndex{
+  position:absolute;
+  top:8px;
+  right:9px;
+  font-size:9px;
+  color:#59636f;
+  letter-spacing:.12em;
+  font-weight:900;
+}
+.nodeVisual{
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin:5px 0 10px;
+}
+.pfVisual span{
+  width:24px;height:24px;
+  border:1px solid #5a6571;
+  border-radius:5px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+}
+.pfVisual span:first-child{color:#ff5d73}
+.pfVisual span:last-child{color:#67a9ff}
+.barsVisual{
+  gap:5px;
+  align-items:flex-end;
+}
+.barsVisual i{
+  display:block;
+  width:7px;
+  border-radius:3px 3px 0 0;
+  background:linear-gradient(180deg,#83b8ff,#315c91);
+}
+.barsVisual i:nth-child(1){height:18px}
+.barsVisual i:nth-child(2){height:34px}
+.barsVisual i:nth-child(3){height:25px}
+.barsVisual i:nth-child(4){height:42px}
+.domVisual{
+  font-size:10px;
+  color:#aab3bd;
+}
+.domVisual span{
+  border:1px solid #3b444f;
+  padding:6px 7px;
+  border-radius:5px;
+}
+.domVisual b{color:var(--accent)}
+.nodeLabel{
+  font-size:13px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing:.04em;
+}
+.nodeRole{
+  margin-top:4px;
+  font-size:9px;
+  color:#89949f;
+  letter-spacing:.13em;
+  font-weight:850;
+}
+.flowChevron{
+  font-size:34px;
+  color:var(--accent);
+  font-weight:300;
+  text-shadow:0 0 16px rgba(255,48,79,.35);
+}
+.capturePrompt{
+  margin-top:16px;
+  border-top:1px solid #282f37;
+  padding-top:14px;
+}
+.captureLinkBanner{
+  margin-bottom:12px;
+  border:1px solid #3a6d54;
+  background:linear-gradient(135deg,rgba(50,129,83,.18),rgba(20,31,25,.8));
+  border-radius:10px;
+  padding:12px 14px;
+}
+.captureLinkBanner b{
+  display:block;
+  margin-bottom:5px;
+}
+.captureLinkBanner .linkMeta{
+  color:#9ca8a1;
+  font-size:10px;
+  line-height:1.55;
+}
+@media(max-width:760px){
+  .analysisFlowPro{grid-template-columns:1fr}
+  .flowChevron{transform:rotate(90deg);text-align:center;line-height:20px}
+}
+
+@media(max-width:760px){
+  .emotionButtons{grid-template-columns:1fr 1fr}
+  .emotionButtons .emotionBtn:last-child{grid-column:1 / -1}
+}
+
+@media(max-width:760px){
+  .analysisChain{
+    grid-template-columns:1fr;
+  }
+  .chainArrow{transform:rotate(90deg);text-align:center}
+  .regimeButtons{grid-template-columns:1fr}
+  .comboGrid{grid-template-columns:1fr}
+}
+
+@media(max-width:760px){
+  .startCompact{grid-template-columns:1fr 1fr}
+  .startCompact > div:last-child{grid-column:auto}
+}
+
 @media(max-width:760px){
   .grid2,.grid3,.grid4,.frameworkFlow{grid-template-columns:1fr}
   .sessionbar,.sessionHead{flex-direction:column}
@@ -116,12 +829,12 @@ input[type=range]{padding:0;border:0;background:transparent}
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.2 — simplified data collection</div>
+      <div class="ver">v0.16 — complete cumulative export</div>
     </div>
     <div class="nav">
-      <button id="navHome" onclick="showView('home')">Today</button>
-      <button id="navData" onclick="showView('data')">Data</button>
-      <button id="navFramework" onclick="showView('framework')">Framework</button>
+      <button id="navHome" onclick="showView('home')">OGGI</button>
+      <button id="navData" onclick="showView('data')">DATI</button>
+      <button id="navFramework" onclick="showView('framework')">FRAMEWORK</button>
     </div>
   </header>
 
@@ -129,265 +842,483 @@ input[type=range]{padding:0;border:0;background:transparent}
     <!-- HOME -->
     <section id="view_home">
       <div id="noSession">
-        <div class="kicker">START FROM THE DAY, NOT THE TRADE</div>
-        <h1>Nuova sessione di osservazione</h1>
-        <p class="sub">L’app raccoglie snapshot del contesto, blocchi di trading e percorso economico. Non serve registrare ogni scalp.</p>
-        <div class="card quick" onclick="openForm('start')">
-          <div><b>Avvia sessione</b><div class="hint">Definisci soltanto i guardrail economici e il mercato. Il resto si costruisce durante la giornata.</div></div>
-          <span>Start →</span>
+        <h1 class="labTitle">TRADING ECOSYSTEM <span>LAB</span></h1>
+
+        <div id="carryForwardList"></div>
+
+        <div class="actions" style="margin-top:18px">
+          <button class="primary" style="width:100%;font-size:15px;padding:14px 16px" onclick="beginGuidedSession()">AVVIA SESSIONE</button>
+        </div>
+
+        <div id="todayGuidedWrap" class="card hidden" style="margin-top:18px">
+          <div class="smallcaps">SESSIONI DI TRADING OGGI</div>
+          <div id="todayGuidedList"></div>
         </div>
       </div>
 
       <div id="activeSession" class="hidden">
-        <div class="card">
+        <div class="card liveSessionCard">
           <div class="sessionbar">
             <div>
-              <div class="smallcaps">ACTIVE SESSION</div>
+              <div class="smallcaps">SESSIONE DI TRADING ATTIVA</div>
               <div class="big" id="activeTitle">—</div>
               <div class="muted" id="activeMeta">—</div>
             </div>
             <div style="text-align:right">
-              <div class="smallcaps">CURRENT P&L</div>
-              <div class="big" id="currentPnl">$0</div>
-              <div class="floor" id="floorText">—</div>
+              <div class="smallcaps">CHECK-IN</div>
+              <div class="big" id="activeCheckin">—</div>
+              <div class="floor" id="activeEmotion">—</div>
             </div>
           </div>
         </div>
 
-        <div class="grid4" id="stateMetrics">
-          <div class="metric"><div class="l">Regime now</div><div class="v" id="mRegime">—</div></div>
-          <div class="metric"><div class="l">Trades logged</div><div class="v" id="mTrades">0</div></div>
-          <div class="metric"><div class="l">Peak P&L</div><div class="v" id="mPeak">$0</div></div>
-          <div class="metric"><div class="l">Context snapshots</div><div class="v" id="mGross">0</div></div>
-        </div>
-
-        <div class="kicker" style="margin-top:20px">QUICK CAPTURE</div>
-        <div class="grid2">
-          <div class="card quick" onclick="openForm('context')">
-            <b>Context Snapshot</b>
-            <span>Regime, sessione, ATR, TPO, VWAP. Solo quando cambia qualcosa.</span>
-          </div>
-          <div class="card quick" onclick="openForm('block')">
-            <b>Trading Block</b>
-            <span>Un blocco può contenere 1 trade o 30 scalp. È l’unità operativa.</span>
-          </div>
-          <div class="card quick" onclick="openForm('pnl')">
-            <b>P&L Checkpoint</b>
-            <span>Traccia Build → Boost → Deploy e il giveback dal peak.</span>
-          </div>
-          <div class="card quick" style="opacity:.45;cursor:not-allowed" aria-disabled="true">
-            <b>Multi-Prop Exposure <span class="badge">LATER</span></b>
-            <span>Modulo mantenuto nell’app ma temporaneamente inibito.</span>
-          </div>
-        </div>
+        <div id="activePlaybook"></div>
 
         <div class="card">
-          <div class="sectionTitle">
-            <div><h3>Timeline della giornata</h3><div class="muted">Gli ultimi eventi registrati.</div></div>
-            <button class="secondary" onclick="openForm('close')">Close session</button>
+          <div class="smallcaps">RESTARE ON TRACK</div>
+          <p class="sub" style="margin:8px 0 0">SE IL MERCATO CAMBIA, TERMINA QUESTA SESSIONE E ATTIVANE UNA NUOVA: OGNI SESSIONE FOTOGRAFA UNA LETTURA DEL MERCATO IN QUEL MOMENTO.</p>
+          <div class="actions">
+            <button class="primary" onclick="openGuidedClose()">TERMINA SESSIONE</button>
           </div>
-          <div class="sep"></div>
-          <div id="todayTimeline" class="timeline"></div>
         </div>
       </div>
     </section>
 
     <!-- DATA -->
     <section id="view_data" class="hidden">
-      <div class="kicker">DESCRIPTIVE DATA ONLY</div>
-      <h1>Quello che stiamo imparando</h1>
-      <p class="sub">Queste statistiche descrivono il campione raccolto. Non dichiarano un edge e non trasformano pochi casi in una regola.</p>
+      <div class="kicker">DATA CAPTURE + DATA STATS</div>
+      <h1>DATI</h1>
+      <p class="sub">QUI RACCOGLIAMO I DATI GREZZI DELLA GIORNATA E POI LI AGGREGHIAMO. IL DATA CAPTURE È INDIPENDENTE DALLA LETTURA FATTA NELLA SESSIONE LIVE.</p>
 
-      <div class="notice">Prima di circa 20 blocchi comparabili, considera qualsiasi differenza come un indizio da approfondire, non come una conclusione.</div>
+      <div class="card captureCta">
+        <div class="sectionTitle">
+          <div>
+            <h3>DATA CAPTURE</h3>
+            <div class="muted">PUOI ESEGUIRNE PIÙ DI UNO NELLA STESSA GIORNATA.</div>
+          </div>
+          <button class="primary" onclick="openDataCapture()">NUOVO DATA CAPTURE</button>
+        </div>
+      </div>
 
       <div class="grid4" style="margin-top:12px">
-        <div class="metric"><div class="l">Sessions</div><div class="v" id="aSessions">0</div></div>
-        <div class="metric"><div class="l">Trading blocks</div><div class="v" id="aBlocks">0</div></div>
-        <div class="metric"><div class="l">Trades</div><div class="v" id="aTrades">0</div></div>
-        <div class="metric"><div class="l">Closed P&L</div><div class="v" id="aPnl">$0</div></div>
+        <div class="metric"><div class="l">DATA CAPTURE</div><div class="v" id="aSessions">0</div></div>
+        <div class="metric"><div class="l">TRADE UNICI</div><div class="v" id="aTrades">0</div></div>
+        <div class="metric"><div class="l">P&L LORDO</div><div class="v" id="aPnl">$0</div></div>
+        <div class="metric"><div class="l">COSTI</div><div class="v" id="aFees">$0</div></div>
       </div>
 
       <div class="card">
-        <h3>Regime × risultato</h3>
+        <h3>RISULTATI PER SESSIONE</h3>
         <div class="tablewrap"><table>
-          <thead><tr><th>Regime</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg block</th><th>Avg sync</th></tr></thead>
-          <tbody id="regimeTable"></tbody>
+          <thead><tr><th>SESSIONE</th><th>TRADE</th><th>P&L</th><th>MEDIA</th><th>WIN RATE</th><th>ATR MEDIO</th><th>DURATA MEDIA</th></tr></thead>
+          <tbody id="sessionStatsTable"></tbody>
         </table></div>
       </div>
 
       <div class="card">
-        <h3>Fase della giornata × risultato</h3>
+        <h3>RISULTATI PER CONTESTO</h3>
         <div class="tablewrap"><table>
-          <thead><tr><th>Phase</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg block</th><th>Mean-revert</th><th>Directional</th></tr></thead>
-          <tbody id="phaseTable"></tbody>
+          <thead><tr><th>CONTESTO</th><th>TRADE</th><th>P&L</th><th>MEDIA</th><th>WIN RATE</th><th>ATR MEDIO</th><th>DURATA MEDIA</th></tr></thead>
+          <tbody id="contextStatsTable"></tbody>
         </table></div>
       </div>
 
-      <div class="card">
-        <h3>Build / Boost / Deploy</h3>
-        <div class="tablewrap"><table>
-          <thead><tr><th>Economic role</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg block</th></tr></thead>
-          <tbody id="roleTable"></tbody>
-        </table></div>
-      </div>
-
-      <div class="card">
-        <h3>Execution style</h3>
-        <div class="tablewrap"><table>
-          <thead><tr><th>Execution</th><th>Blocks</th><th>Trades</th><th>P&L</th><th>Avg sync</th></tr></thead>
-          <tbody id="execTable"></tbody>
-        </table></div>
-      </div>
-
-      <div class="card">
-        <h3>Hypothesis tracker</h3>
-        <div class="muted" style="margin-bottom:10px">Confronta l’ipotesi: fuori RTH più mean reverting; RTH/MOC più directional.</div>
-        <div id="hypothesisBox"></div>
-      </div>
-
-      <div class="card">
-        <h3>Behavior flags</h3>
-        <div id="behaviorBox" class="pillrow"></div>
-      </div>
-
-      <div class="card">
-        <h3>Sessioni registrate</h3>
-        <div id="sessionList"></div>
-      </div>
-
-      <div class="card">
-        <h3>Backup & export</h3>
-        <p class="muted">I dati restano nel browser di questo dispositivo. Fai export regolari se userai GitHub Pages da iPhone.</p>
-        <div class="actions">
-          <button class="secondary" onclick="exportJSON()">Export JSON</button>
-          <button class="secondary" onclick="exportBlocksCSV()">Export blocks CSV</button>
-          <button class="secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
-          <input class="hidden" id="importFile" type="file" accept=".json,application/json" onchange="importJSON(event)">
-          <button class="danger" onclick="resetAll()">Reset all data</button>
+      <div class="grid2">
+        <div class="card">
+          <h3>CHECK-IN EMOTIVO</h3>
+          <div class="hint">COME ENTRO NELLA SESSIONE.</div>
+          <div id="emotionCheckinStats" class="pillrow" style="margin-top:10px"></div>
         </div>
+
+        <div class="card">
+          <h3>CHECK-OUT EMOTIVO</h3>
+          <div class="hint">COME ESCO DALLA SESSIONE.</div>
+          <div id="emotionCheckoutStats" class="pillrow" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>TRANSIZIONE EMOTIVA</h3>
+        <div class="hint">CHECK-IN → CHECK-OUT DELLE SESSIONI CONCLUSE.</div>
+        <div id="emotionTransitions" class="pillrow" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card">
+        <div class="sectionTitle">
+          <div>
+            <h3>DURATA TRADE</h3>
+            <div class="muted">CALCOLATA AUTOMATICAMENTE DAL CSV TOPSTEPX.</div>
+          </div>
+        </div>
+
+        <div class="grid4" style="margin-top:12px">
+          <div class="metric"><div class="l">DURATA MEDIA</div><div class="v" id="dAvg">—</div></div>
+          <div class="metric"><div class="l">DURATA MEDIANA</div><div class="v" id="dMedian">—</div></div>
+          <div class="metric"><div class="l">MEDIA VINCENTI</div><div class="v" id="dWin">—</div></div>
+          <div class="metric"><div class="l">MEDIA PERDENTI</div><div class="v" id="dLoss">—</div></div>
+        </div>
+
+        <div class="tablewrap" style="margin-top:12px">
+          <table>
+            <thead>
+              <tr>
+                <th>FASCIA DURATA</th>
+                <th>TRADE</th>
+                <th>P&L</th>
+                <th>MEDIA P&L</th>
+                <th>WIN RATE</th>
+                <th>ATR MEDIO</th>
+              </tr>
+            </thead>
+            <tbody id="durationStatsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>DATA CAPTURE REGISTRATI</h3>
+        <div id="captureList"></div>
+      </div>
+
+      <div class="card">
+        <h3>BACKUP ED ESPORTAZIONE</h3>
+        <p class="muted">I DATI RESTANO NEL BROWSER DI QUESTO DISPOSITIVO. ESEGUI BACKUP REGOLARI.</p>
+        <div class="actions">
+          <button class="primary" onclick="exportCompleteLab()">ESPORTA LAB COMPLETO</button>
+          <button class="secondary" onclick="exportBlocksCSV()">ESPORTA TRADE CSV</button>
+          <button class="secondary" onclick="document.getElementById('importFile').click()">IMPORTA LAB</button>
+          <input class="hidden" id="importFile" type="file" accept=".json,application/json" onchange="importJSON(event)">
+          <button class="danger" onclick="resetAll()">AZZERA TUTTI I DATI</button>
+        </div>
+        <p class="hint" style="margin-top:10px">
+          L'EXPORT COMPLETO È CUMULATIVO E INCLUDE DATI, SESSIONI LIVE, CHECK-IN / CHECK-OUT, DATA CAPTURE,
+          WORKING OBSERVATIONS, FRAMEWORK, STATISTICHE E SCREENSHOT. È IL FILE DA CARICARE NELLA CHAT DEDICATA ALL'ANALISI.
+        </p>
       </div>
     </section>
 
     <!-- FRAMEWORK -->
     <section id="view_framework" class="hidden">
-      <div class="kicker">WORKING HYPOTHESES</div>
-      <h1>Framework corrente</h1>
-      <p class="sub">Non sono regole definitive. Sono le ipotesi che l’app deve aiutarci a confermare, correggere o abbandonare.</p>
+      <div class="kicker">FRAMEWORK OPERATIVO</div>
+      <h1>FRAMEWORK</h1>
+      <p class="sub">È IL QUADRO ENTRO CUI OPERIAMO E CHE IL LAB DEVE CONTINUARE A VERIFICARE, CORREGGERE O SMENTIRE.</p>
 
       <div class="frameworkFlow">
-        <div class="flowbox"><b>1 · TIME</b><span>Asia → Europe → NY RTH → Late RTH / MOC. La fase crea una prior expectation, non determina il trade.</span></div>
-        <div class="flowbox"><b>2 · REGIME</b><span>P&F aiuta a distinguere Mean Reversion / Chop da Directional / Momentum. Unclear resta una risposta valida.</span></div>
-        <div class="flowbox"><b>3 · EXECUTION</b><span>Chop → TPO / VAH / VAL → tendenzialmente Limit. Directional → 30s / 9EMA / pinbar / VWAP → tendenzialmente Market.</span></div>
-        <div class="flowbox"><b>4 · MONEY</b><span>Pre-RTH Build the fund → RTH Boost → MOC Deploy, dentro guardrail economici.</span></div>
+        <div class="flowbox"><b>1 · RIFERIMENTI</b><span>PER ORA: PREVIOUS DAY HIGH, PREVIOUS DAY LOW, SETTLEMENT.</span></div>
+        <div class="flowbox"><b>2 · REGIME</b><span>P&F PER IDENTIFICARE CONSOLIDAMENTO O SPOSTAMENTO.</span></div>
+        <div class="flowbox"><b>3 · STRUTTURA</b><span>BAR CHART PER CAPIRE COME IL PREZZO SI STA MUOVENDO.</span></div>
+        <div class="flowbox"><b>4 · ENTRY</b><span>FOOTPRINT / DOM PER IL TIMING OPERATIVO.</span></div>
       </div>
 
       <div class="card">
-        <h3>Mean Reversion / Chop</h3>
+        <h3>CONSOLIDAMENTO</h3>
         <div class="pillrow">
-          <span class="badge">P&F</span><span class="badge">TPO</span><span class="badge">VAH</span><span class="badge">VAL</span><span class="badge">Limit orders</span><span class="badge">Small repeated moves</span>
+          <span class="badge">VALUE AREA</span><span class="badge">ESTREMI</span><span class="badge">PICCOLI SCALP</span><span class="badge">LIMIT ORDER</span><span class="badge accent">SENZA STOP · DA VALIDARE</span>
         </div>
-        <p class="hint">La 9EMA perde importanza. L’ampiezza della Value Area va osservata, soprattutto nelle fasi tarde della giornata.</p>
+        <p class="hint">LAVORARE L'AREA E GLI ESTREMI, SENZA INSEGUIRE IL PREZZO.</p>
       </div>
 
       <div class="card">
-        <h3>Directional / Momentum</h3>
+        <h3>SPOSTAMENTO / TREND</h3>
+        <div class="comboPanel">
+          <div class="comboTitle">COMBO AD ALTA PRIORITÀ</div>
+          <div class="comboGrid">
+            <div class="comboItem"><b>VWAP</b><span>+</span><b>9EMA</b></div>
+            <div class="comboItem"><b>PINBAR</b><span>+</span><b>9EMA</b></div>
+            <div class="comboItem"><b>VWAP</b><span>+</span><b>PINBAR</b></div>
+          </div>
+        </div>
+        <div class="pillrow" style="margin-top:12px">
+          <span class="badge">STRUTTURA</span><span class="badge">VWAP</span><span class="badge">STOP LOSS</span><span class="badge">WEAK CANDLE</span><span class="badge">PIVOT COINCIDENTI</span>
+        </div>
+        <p class="hint">SE PRESENTE, TRACCIA IL RETTANGOLO SULLA WEAK CANDLE. DUE PIVOT HIGH O DUE PIVOT LOW COINCIDENTI POSSONO DEFINIRE SUPPORTO / RESISTENZA.</p>
+      </div>
+
+      <div class="card">
+        <h3>LEGENDA GRAFICO</h3>
         <div class="pillrow">
-          <span class="badge">30 sec</span><span class="badge">9EMA</span><span class="badge">Pinbar</span><span class="badge">VWAP</span><span class="badge">Break & Retest</span><span class="badge">Market orders</span>
-        </div>
-        <p class="hint">Quando il mercato esce dal consolidamento può entrare la logica Break & Retest e il canale a due uscite intorno alla 9EMA.</p>
-      </div>
-
-      <div class="card">
-        <h3>Economic architecture</h3>
-        <div class="grid3">
-          <div class="metric"><div class="l">PRE-RTH</div><div class="v" style="font-size:16px">BUILD</div><div class="hint">Creare il fondo.</div></div>
-          <div class="metric"><div class="l">RTH</div><div class="v" style="font-size:16px">BOOST</div><div class="hint">Main trade: VWAP B&R / rejection.</div></div>
-          <div class="metric"><div class="l">MOC</div><div class="v" style="font-size:16px">DEPLOY</div><div class="hint">Uso del gain di giornata, entro i guardrail.</div></div>
+          <span class="badge">VWAP ASIA · NERA</span><span class="badge">VWAP LONDON · ROSSA</span><span class="badge">VWAP NY · BLU</span><span class="badge">DEVIAZIONI STANDARD</span>
         </div>
       </div>
 
       <div class="card">
-        <h3>Risk box</h3>
-        <div class="pillrow"><span class="badge accent">DLL</span><span class="badge accent">WLL</span><span class="badge accent">Daily peak / giveback</span><span class="badge accent">Exposure</span></div>
-        <p class="hint">Working principle: maximum freedom inside a hard risk box. Restano da studiare stop, R factor, micro-scalping, MOC e uso del gain.</p>
+        <h3>MOC</h3>
+        <p class="hint">CON ALTA VOLATILITÀ, CONTESTO DA STUDIARE PER TRADE DI MAGGIORE ESTENSIONE / GRAND SLAM.</p>
       </div>
 
       <div class="card" style="opacity:.55">
-        <h3>Account / Exposure architecture <span class="badge">LATER</span></h3>
-        <p class="hint">Tema mantenuto nel framework per non perderlo, ma volutamente escluso dalla raccolta dati attuale. Verrà riattivato solo quando avremo una ragione concreta per studiarlo.</p>
+        <h3>ARCHITETTURA MULTI-PROP <span class="badge">PIÙ AVANTI</span></h3>
+        <p class="hint">TEMA MANTENUTO NEL PROGETTO MA VOLUTAMENTE INIBITO.</p>
       </div>
     </section>
 
     <!-- FORMS -->
     <section id="form_start" class="hidden sheet">
-      <div class="kicker">NEW SESSION</div><h1>Avvia la giornata</h1>
-      <div class="card">
-        <div class="grid2">
-          <div><label>Date</label><input id="st_date" type="date"></div>
-          <div><label>Market / Contract</label><input id="st_market" value="ES" placeholder="ES"></div>
+      <div class="kicker">DATA CAPTURE</div>
+      <h1>NUOVO DATA CAPTURE</h1>
+      <div id="captureLinkBanner" class="captureLinkBanner hidden"></div>
+      <div class="card startCard">
+        <div class="startCompact captureDateOnly">
+          <div class="datePickerWrap">
+            <label>DATA</label>
+            <input id="st_date_display" class="dateDisplay" type="text" readonly onclick="toggleCalendar()" aria-label="SELEZIONA DATA">
+            <input id="st_date" type="hidden">
+            <div id="calendarPopup" class="calendarPopup hidden"></div>
+          </div>
         </div>
-        <div class="grid3">
-          <div><label>DLL ($)</label><input id="st_dll" type="number" step="1" value="1000"></div>
-          <div><label>WLL / weekly guardrail ($)</label><input id="st_wll" type="number" step="1" placeholder="optional"></div>
-          <div><label>Max giveback from daily peak ($)</label><input id="st_giveback" type="number" step="1" value="500"></div>
+
+        <div class="csvDrop" id="csvDrop">
+          <div class="csvTop">
+            <div>
+              <b>CSV TOPSTEPX</b>
+              <div class="hint">IMPORTA I TRADE GIÀ ESEGUITI.</div>
+            </div>
+            <button class="secondary" type="button" onclick="document.getElementById('st_csv').click()">CARICA CSV</button>
+          </div>
+          <input class="hidden" id="st_csv" type="file" accept=".csv,text/csv" onchange="handleSessionCsv(event)">
+          <div id="csvStatus" class="csvMeta hidden"></div>
+          <div id="csvFilterNote" class="csvFilterNote hidden"></div>
         </div>
-        <label>Prop firms / accounts in play</label>
-        <input id="st_props" placeholder="es. Topstep A, Topstep B">
-        <label>Starting note / prior expectation</label>
-        <textarea id="st_note" placeholder="Facoltativo. Es.: overnight balance; mi aspetto rotazione fino a prova contraria."></textarea>
-        <div class="actions"><button class="primary" onclick="startSession()">Start session</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+
+        <div id="tradeTableContainer" class="tradeTableWrap hidden"></div>
+
+        <div class="screenshotPanel" id="screenshotPanel" tabindex="0" onpaste="handleScreenshotPaste(event)">
+          <div class="screenshotHead">
+            <div>
+              <b>SCREENSHOT GRAFICO</b>
+              <div class="hint">CLICCA NELL'AREA E INCOLLA CON CTRL+V, OPPURE CARICA UN'IMMAGINE.</div>
+            </div>
+            <button class="secondary" type="button" onclick="event.stopPropagation();document.getElementById('st_screenshot_file').click()">CARICA IMMAGINE</button>
+          </div>
+          <input class="hidden" id="st_screenshot_file" type="file" accept="image/*" onchange="handleScreenshotFile(event)">
+
+          <div id="screenshotEmpty" class="screenshotDrop" onclick="document.getElementById('screenshotPanel').focus()">
+            <b>INCOLLA QUI LO SCREENSHOT — CTRL+V</b>
+            <div class="muted">UN SOLO SCREENSHOT PER SESSIONE</div>
+          </div>
+
+          <div id="screenshotPreviewWrap" class="screenshotPreviewWrap hidden">
+            <img id="chartScreenshotPreview" class="screenshotPreview" alt="ANTEPRIMA SCREENSHOT GRAFICO">
+            <div class="screenshotToolbar">
+              <button class="secondary" type="button" onclick="document.getElementById('st_screenshot_file').click()">SOSTITUISCI</button>
+              <button class="danger" type="button" onclick="removePendingScreenshot()">ELIMINA</button>
+            </div>
+          </div>
+
+          <div class="chartLegend">
+            LEGENDA ATTESA DEL GRAFICO: VWAP ASIA NERA · VWAP LONDON ROSSA · VWAP NY BLU · RELATIVE DEVIAZIONI STANDARD · PREVIOUS DAY HIGH · PREVIOUS DAY LOW · SETTLEMENT
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="saveDataCapture()">SALVA DATA CAPTURE</button>
+          <button class="secondary" onclick="cancelDataCapture()">ANNULLA</button>
+        </div>
       </div>
     </section>
 
+    <section id="form_prepare" class="hidden sheet">
+      <div class="kicker">SESSIONE LIVE</div>
+      <h1>PRIMA DI TRADARE</h1>
+      <div class="card prepCard">
+        <div class="prepStep">00 · CHECK-IN EMOTIVO</div>
+        <h3>COME STAI ENTRANDO IN QUESTA SESSIONE?</h3><p class="hint">REGISTRIAMO LO STATO EMOTIVO PRIMA DI INIZIARE.</p>
+
+        <div style="max-width:360px">
+          <label>P&L DI GIORNATA ATTUALE ($) · FACOLTATIVO</label>
+          <input id="guide_pnl" type="number" step="0.01" placeholder="ES. 250 O -180">
+        </div>
+
+        <label>COME TI SENTI?</label>
+        <div class="emotionButtons" id="emotionButtons">
+          <button class="emotionBtn" data-emotion="CALMO" onclick="selectEmotion('CALMO')">CALMO</button>
+          <button class="emotionBtn" data-emotion="FOCALIZZATO" onclick="selectEmotion('FOCALIZZATO')">FOCALIZZATO</button>
+          <button class="emotionBtn" data-emotion="TESO" onclick="selectEmotion('TESO')">TESO</button>
+          <button class="emotionBtn" data-emotion="EUFORICO" onclick="selectEmotion('EUFORICO')">EUFORICO</button>
+          <button class="emotionBtn" data-emotion="FRUSTRATO" onclick="selectEmotion('FRUSTRATO')">FRUSTRATO</button>
+        </div>
+      </div>
+
+
+      <div class="card prepCard">
+        <div class="prepStep">01 · LIVELLI</div>
+        <h3>TRACCIA I RIFERIMENTI</h3>
+        <p class="hint">PER ORA I RIFERIMENTI SONO SOLO QUESTI.</p>
+
+        <div class="prepChecklist" id="levelChecklist">
+          <button class="prepCheck" data-key="pdh" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>PREVIOUS DAY HIGH</span>
+          </button>
+          <button class="prepCheck" data-key="pdl" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>PREVIOUS DAY LOW</span>
+          </button>
+          <button class="prepCheck" data-key="settlement" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>SETTLEMENT</span>
+          </button>
+          <button class="prepCheck newsCheck" data-key="news" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>NEWS RELEASE DELLA GIORNATA VERIFICATE</span>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="card prepCard">
+        <div class="prepStep">02 · REGIME</div>
+        <h3>IDENTIFICA LO STATO ATTUALE DEL MERCATO</h3>
+
+        <div class="analysisFlowPro">
+          <div class="analysisNode">
+            <div class="nodeIndex">01</div>
+            <div class="nodeVisual pfVisual"><span>X</span><span>O</span></div>
+            <div class="nodeLabel">P&F</div>
+            <div class="nodeRole">REGIME</div>
+          </div>
+
+          <div class="flowChevron">›</div>
+
+          <div class="analysisNode">
+            <div class="nodeIndex">02</div>
+            <div class="nodeVisual barsVisual"><i></i><i></i><i></i><i></i></div>
+            <div class="nodeLabel">BAR CHART</div>
+            <div class="nodeRole">STRUTTURA</div>
+          </div>
+
+          <div class="flowChevron">›</div>
+
+          <div class="analysisNode">
+            <div class="nodeIndex">03</div>
+            <div class="nodeVisual domVisual"><span>BID</span><b>×</b><span>ASK</span></div>
+            <div class="nodeLabel">FOOTPRINT / DOM</div>
+            <div class="nodeRole">ENTRY</div>
+          </div>
+        </div>
+
+        <div class="regimeButtons">
+          <button class="regimeBtn consolidation" data-regime="CONSOLIDAMENTO" onclick="selectPrepRegime('CONSOLIDAMENTO')">CONSOLIDAMENTO</button>
+          <button class="regimeBtn trend" data-regime="SPOSTAMENTO / TREND" onclick="selectPrepRegime('SPOSTAMENTO / TREND')">SPOSTAMENTO / TREND</button>
+          <button class="regimeBtn unclear" data-regime="NON CHIARO" onclick="selectPrepRegime('NON CHIARO')">NON CHIARO</button>
+        </div>
+      </div>
+
+      <div id="prepConsolidation" class="card prepCard regimePlaybook hidden">
+        <div class="prepStep">PLAYBOOK · CONSOLIDAMENTO</div>
+        <h3>LAVORA L'AREA, NON INSEGUIRE IL PREZZO</h3>
+        <div class="prepChecklist">
+          <button class="prepCheck optional" data-key="cons-area" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>IDENTIFICA AREA / VALUE AREA</span>
+          </button>
+          <button class="prepCheck optional" data-key="cons-extremes" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>LAVORA GLI ESTREMI</span>
+          </button>
+          <button class="prepCheck optional" data-key="cons-scalp" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>PICCOLI SCALP</span>
+          </button>
+          <button class="prepCheck optional" data-key="cons-limit" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>LIMIT ORDER</span>
+          </button>
+          <button class="prepCheck optional riskHyp" data-key="cons-nostop" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>SENZA STOP <small>— LINEA GUIDA ATTUALE DA VALIDARE</small></span>
+          </button>
+        </div>
+      </div>
+
+      <div id="prepTrend" class="card prepCard regimePlaybook hidden">
+        <div class="prepStep">PLAYBOOK · SPOSTAMENTO / TREND</div>
+        <h3>LAVORA LA STRUTTURA</h3>
+
+        <div class="comboPanel">
+          <div class="comboTitle">COMBO AD ALTA PRIORITÀ</div>
+          <div class="comboGrid">
+            <div class="comboItem"><b>VWAP</b><span>+</span><b>9EMA</b></div>
+            <div class="comboItem"><b>PINBAR</b><span>+</span><b>9EMA</b></div>
+            <div class="comboItem"><b>VWAP</b><span>+</span><b>PINBAR</b></div>
+          </div>
+        </div>
+
+        <div class="prepChecklist" style="margin-top:14px">
+          <button class="prepCheck optional" data-key="trend-structure" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>LEGGI LA STRUTTURA</span>
+          </button>
+          <button class="prepCheck optional" data-key="trend-vwap" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>CERCA RELAZIONE CON VWAP</span>
+          </button>
+          <button class="prepCheck optional" data-key="trend-stop" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>USA STOP LOSS</span>
+          </button>
+          <button class="prepCheck optional" data-key="trend-weak" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>SE PRESENTE, TRACCIA RETTANGOLO SULLA WEAK CANDLE</span>
+          </button>
+          <button class="prepCheck optional" data-key="trend-pivots" onclick="togglePrepCheck(this)">
+            <span class="checkBox">✓</span><span>DUE PIVOT HIGH O DUE PIVOT LOW COINCIDENTI → SUPPORTO / RESISTENZA</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="prepUnclear" class="card prepCard regimePlaybook hidden">
+        <div class="prepStep">REGIME · NON CHIARO</div>
+        <h3>NON FORZARE IL PLAYBOOK</h3>
+        <p class="sub" style="margin:0">ATTENDI CHE IL MERCATO DIVENTI LEGGIBILE PRIMA DI SCEGLIERE CONSOLIDAMENTO O SPOSTAMENTO.</p>
+      </div>
+
+      <div class="prepFooter">
+        <div id="prepStatus" class="prepStatus">COMPLETA I LIVELLI E CLASSIFICA IL MERCATO.</div>
+        <div class="actions">
+          <button class="secondary" onclick="showView('home')">ANNULLA</button>
+          <button id="prepStartBtn" class="primary prepStartDisabled" onclick="finalizeSessionFromPreparation()">ATTIVA SESSIONE DI TRADING</button>
+        </div>
+      </div>
+    </section>
+
+
     <section id="form_context" class="hidden sheet">
-      <div class="kicker">CONTEXT SNAPSHOT</div><h1>Che mercato sto guardando?</h1>
+      <div class="kicker">SNAPSHOT CONTESTO</div><h1>Che mercato sto guardando?</h1>
       <p class="sub">Compilalo solo quando cambia qualcosa di significativo.</p>
       <div class="card">
         <div class="grid2">
-          <div><label>Time</label><input id="cx_time" type="time"></div>
-          <div><label>Session phase</label><select id="cx_phase">
-            <option>Asia</option><option selected>Europe</option><option>NY RTH</option><option>Late RTH / MOC</option>
+          <div><label>ORARIO</label><input id="cx_time" type="time"></div>
+          <div><label>FASE DELLA SESSIONE</label><select id="cx_phase">
+            <option value="Asia">ASIA</option><option value="Europe" selected>EUROPA</option><option value="NY RTH">NY RTH</option><option value="Late RTH / MOC">RTH FINALE / MOC</option>
           </select></div>
         </div>
-        <label>Prior expectation</label>
-        <div class="choices" data-group="cx_expect"><button class="choice" data-v="Mean Reversion">Mean Reversion</button><button class="choice" data-v="Directional">Directional</button><button class="choice" data-v="Neutral">Neutral</button></div>
-        <label>P&F / observed regime</label>
-        <div class="choices" data-group="cx_regime"><button class="choice good" data-v="Mean Reversion / Chop">Mean Reversion / Chop</button><button class="choice blue" data-v="Directional / Momentum">Directional / Momentum</button><button class="choice" data-v="Transition">Transition</button><button class="choice" data-v="Unclear">Unclear</button></div>
+        <label>ASPETTATIVA INIZIALE</label>
+        <div class="choices" data-group="cx_expect"><button class="choice" data-v="Mean Reversion">CONSOLIDAMENTO</button><button class="choice" data-v="Directional">TREND</button><button class="choice" data-v="Neutral">NEUTRALE</button></div>
+        <label>P&F / REGIME OSSERVATO</label>
+        <div class="choices" data-group="cx_regime"><button class="choice good" data-v="Mean Reversion / Chop">CONSOLIDAMENTO / MEAN REVERSION</button><button class="choice blue" data-v="Directional / Momentum">TREND / MOMENTUM</button><button class="choice" data-v="Transition">TRANSIZIONE</button><button class="choice" data-v="Unclear">NON CHIARO</button></div>
         <div class="grid3">
           <div><label>ATR(14) 30s</label><input id="cx_atr" type="number" step="0.01" placeholder="optional"></div>
-          <div><label>TPO / Value Area width</label><select id="cx_va"><option>N/A</option><option>Tight</option><option>Normal</option><option>Wide</option></select></div>
-          <div><label>Price vs VWAP</label><select id="cx_vwap"><option>N/A</option><option>Above</option><option>Below</option><option>At / Around</option></select></div>
+          <div><label>AMPIEZZA VALUE AREA</label><select id="cx_va"><option value="N/A">N/D</option><option value="Tight">STRETTA</option><option value="Normal">NORMALE</option><option value="Wide">AMPIA</option></select></div>
+          <div><label>PREZZO VS VWAP</label><select id="cx_vwap"><option value="N/A">N/D</option><option value="Above">SOPRA</option><option value="Below">SOTTO</option><option value="At / Around">INTORNO</option></select></div>
         </div>
-        <label>Observation</label><textarea id="cx_note" placeholder="Una frase: cosa è cambiato / cosa vedi?"></textarea>
-        <div class="actions"><button class="primary" onclick="saveContext()">Save snapshot</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+        <label>OSSERVAZIONE</label><textarea id="cx_note" placeholder="Una frase: cosa è cambiato / cosa vedi?"></textarea>
+        <div class="actions"><button class="primary" onclick="saveContext()">SALVA SNAPSHOT</button><button class="secondary" onclick="cancelForm()">ANNULLA</button></div>
       </div>
     </section>
 
     <section id="form_block" class="hidden sheet">
-      <div class="kicker">TRADING BLOCK</div><h1>Registra il blocco, non ogni click</h1>
+      <div class="kicker">BLOCCO DI TRADING</div><h1>Registra il blocco, non ogni click</h1>
       <p class="sub">Può rappresentare 10 minuti di scalp, un singolo main trade o il MOC.</p>
       <div class="card">
         <div class="grid3">
           <div><label>Start</label><input id="bl_start" type="time"></div>
           <div><label>End</label><input id="bl_end" type="time"></div>
-          <div><label>Session phase</label><select id="bl_phase"><option>Asia</option><option selected>Europe</option><option>NY RTH</option><option>Late RTH / MOC</option></select></div>
+          <div><label>Session phase</label><select id="bl_phase"><option value="Asia">ASIA</option><option value="Europe" selected>EUROPA</option><option value="NY RTH">NY RTH</option><option value="Late RTH / MOC">RTH FINALE / MOC</option></select></div>
         </div>
         <div class="grid2">
           <div><label>Observed regime</label><select id="bl_regime"><option>Mean Reversion / Chop</option><option>Directional / Momentum</option><option>Transition</option><option>Unclear</option></select></div>
           <div><label>Economic role</label><select id="bl_role"><option>Build the fund</option><option>RTH boost</option><option>MOC deployment</option><option>Other / Exploration</option></select></div>
         </div>
-        <label>Strategic approach</label>
+        <label>APPROCCIO STRATEGICO</label>
         <div class="choices" data-group="bl_approach"><button class="choice" data-v="Mean Reversion">Mean Reversion</button><button class="choice" data-v="Directional">Directional</button><button class="choice" data-v="Flow discretionary">Flow discretionary</button><button class="choice" data-v="Other">Other</button></div>
-        <label>Execution</label>
+        <label>ESECUZIONE</label>
         <div class="choices" data-group="bl_exec"><button class="choice" data-v="Mostly Limit">Mostly Limit</button><button class="choice" data-v="Mostly Market">Mostly Market</button><button class="choice" data-v="Mixed">Mixed</button></div>
 
-        <label>References used</label>
+        <label>RIFERIMENTI UTILIZZATI</label>
         <div class="choices multi" data-group="bl_refs" data-multi="1">
           <button class="choice" data-v="P&F">P&F</button><button class="choice" data-v="TPO">TPO</button><button class="choice" data-v="VAH">VAH</button><button class="choice" data-v="VAL">VAL</button><button class="choice" data-v="POC">POC</button><button class="choice" data-v="VWAP">VWAP</button><button class="choice" data-v="9EMA">9EMA</button><button class="choice" data-v="Pinbar">Pinbar</button><button class="choice" data-v="Break & Retest">B&R</button><button class="choice" data-v="Rejection">Rejection</button><button class="choice" data-v="MOC">MOC</button><button class="choice" data-v="Footprint / Delta">Footprint</button>
         </div>
 
         <div class="grid4">
-          <div><label># trades in block</label><input id="bl_trades" type="number" step="1" min="0" value="1"></div>
+          <div><label>N. TRADE NEL BLOCCO</label><input id="bl_trades" type="number" step="1" min="0" value="1"></div>
           <div><label>Max contracts</label><input id="bl_contracts" type="number" step="1" min="0" placeholder="optional"></div>
           <div><label>Typical target (ticks)</label><input id="bl_target" type="number" step="0.5" placeholder="optional"></div>
           <div><label>Block P&L ($)</label><input id="bl_pnl" type="number" step="0.01" placeholder="required for analysis"></div>
@@ -405,10 +1336,10 @@ input[type=range]{padding:0;border:0;background:transparent}
           <div><label>ATR 30s (representative)</label><input id="bl_atr" type="number" step="0.01" placeholder="optional"></div>
         </div>
 
-        <label>How in sync did you feel? <span class="muted">(1 = lost, 5 = effortless)</span></label>
+        <label>QUANTO TI SEI SENTITO IN SINCRONIA? <span class="muted">(1 = FUORI SINCRONIA, 5 = FLUIDO)</span></label>
         <div class="rangeRow"><input id="bl_sync" type="range" min="1" max="5" step="1" value="3" oninput="document.getElementById('bl_syncv').value=this.value"><input id="bl_syncv" value="3" readonly></div>
 
-        <label>Behavior flags</label>
+        <label>SEGNALI COMPORTAMENTALI</label>
         <div class="choices multi" data-group="bl_behavior" data-multi="1">
           <button class="choice" data-v="Clean / controlled">Clean / controlled</button>
           <button class="choice" data-v="Overtrading">Overtrading</button>
@@ -418,23 +1349,23 @@ input[type=range]{padding:0;border:0;background:transparent}
           <button class="choice" data-v="Hesitation">Hesitation</button>
           <button class="choice" data-v="FOMO">FOMO</button>
         </div>
-        <label>Block note</label><textarea id="bl_note" placeholder="Cosa rende questo blocco utile da ricordare?"></textarea>
-        <div class="actions"><button class="primary" onclick="saveBlock()">Save block</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+        <label>NOTA BLOCCO</label><textarea id="bl_note" placeholder="Cosa rende questo blocco utile da ricordare?"></textarea>
+        <div class="actions"><button class="primary" onclick="saveBlock()">SALVA BLOCCO</button><button class="secondary" onclick="cancelForm()">ANNULLA</button></div>
       </div>
     </section>
 
     <section id="form_pnl" class="hidden sheet">
-      <div class="kicker">P&L CHECKPOINT</div><h1>Dove siamo economicamente?</h1>
+      <div class="kicker">CHECKPOINT P&L</div><h1>Dove siamo economicamente?</h1>
       <div class="card">
         <div class="grid3">
           <div><label>Time</label><input id="pn_time" type="time"></div>
-          <div><label>Phase</label><select id="pn_phase"><option>Asia</option><option selected>Europe</option><option>NY RTH</option><option>Late RTH / MOC</option></select></div>
+          <div><label>Phase</label><select id="pn_phase"><option value="Asia">ASIA</option><option value="Europe" selected>EUROPA</option><option value="NY RTH">NY RTH</option><option value="Late RTH / MOC">RTH FINALE / MOC</option></select></div>
           <div><label>Current P&L ($)</label><input id="pn_value" type="number" step="0.01"></div>
         </div>
         <label>Why are you recording this checkpoint?</label>
         <select id="pn_reason"><option>Routine checkpoint</option><option>Before RTH</option><option>After main trade</option><option>Before MOC</option><option>New daily peak</option><option>Large drawdown / giveback</option><option>Other</option></select>
         <label>Note</label><textarea id="pn_note" placeholder="Optional"></textarea>
-        <div class="actions"><button class="primary" onclick="savePnl()">Save checkpoint</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+        <div class="actions"><button class="primary" onclick="savePnl()">SALVA CHECKPOINT</button><button class="secondary" onclick="cancelForm()">ANNULLA</button></div>
       </div>
     </section>
 
@@ -455,25 +1386,48 @@ input[type=range]{padding:0;border:0;background:transparent}
         <label>Rule compatibility status</label>
         <div class="choices" data-group="ex_rules"><button class="choice good" data-v="Verified">Verified</button><button class="choice" data-v="Unknown / Not checked">Unknown / Not checked</button><button class="choice bad" data-v="Potential conflict">Potential conflict</button></div>
         <label>Note</label><textarea id="ex_note" placeholder="Optional"></textarea>
-        <div class="actions"><button class="primary" onclick="saveExposure()">Save exposure snapshot</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+        <div class="actions"><button class="primary" onclick="saveExposure()">Save exposure snapshot</button><button class="secondary" onclick="cancelForm()">ANNULLA</button></div>
       </div>
     </section>
 
     <section id="form_close" class="hidden sheet">
-      <div class="kicker">END OF SESSION</div><h1>Chiudi la giornata</h1>
-      <p class="sub">Pochi dati di chiusura. L’obiettivo è capire l’ecosistema, non assegnare un voto alla giornata.</p>
+      <div class="kicker">CHECK-OUT EMOTIVO</div>
+      <h1>COME STAI USCENDO DALLA SESSIONE?</h1>
       <div class="card">
-        <div class="grid3">
-          <div><label>Final P&L ($)</label><input id="cl_pnl" type="number" step="0.01"></div>
-          <div><label>Energy spent</label><select id="cl_energy"><option value="1">1 — low</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 — exhausted</option></select></div>
-          <div><label>Overall flow sync</label><select id="cl_sync"><option value="1">1 — lost</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 — in sync</option></select></div>
+        <div class="grid2">
+          <div>
+            <label>P&L DI GIORNATA ATTUALE ($) · OBBLIGATORIO</label>
+            <input id="cl_pnl" type="number" step="0.01">
+          </div>
+          <div>
+            <label>DURATA</label>
+            <input id="cl_duration" type="text" readonly>
+          </div>
         </div>
-        <label>Did revenge trading appear?</label>
-        <div class="choices" data-group="cl_revenge"><button class="choice good" data-v="No">No</button><button class="choice bad" data-v="Yes">Yes</button><button class="choice" data-v="Unclear">Unclear</button></div>
-        <label>What did the market make easiest today?</label><textarea id="cl_easy" placeholder="Optional"></textarea>
-        <label>What created the most friction?</label><textarea id="cl_friction" placeholder="Optional"></textarea>
-        <label>One observation worth carrying forward</label><textarea id="cl_insight" placeholder="Una sola osservazione, non una nuova regola."></textarea>
-        <div class="actions"><button class="primary" onclick="closeSession()">Close session</button><button class="secondary" onclick="cancelForm()">Cancel</button></div>
+
+        <label>STATO EMOTIVO AL CHECK-OUT</label>
+        <div class="emotionButtons" id="closeEmotionButtons">
+          <button class="emotionBtn" data-emotion="CALMO" onclick="selectCloseEmotion('CALMO')">CALMO</button>
+          <button class="emotionBtn" data-emotion="FOCALIZZATO" onclick="selectCloseEmotion('FOCALIZZATO')">FOCALIZZATO</button>
+          <button class="emotionBtn" data-emotion="TESO" onclick="selectCloseEmotion('TESO')">TESO</button>
+          <button class="emotionBtn" data-emotion="EUFORICO" onclick="selectCloseEmotion('EUFORICO')">EUFORICO</button>
+          <button class="emotionBtn" data-emotion="FRUSTRATO" onclick="selectCloseEmotion('FRUSTRATO')">FRUSTRATO</button>
+        </div>
+
+        <label>È EMERSA UNA NUOVA OSSERVAZIONE / INTUIZIONE?</label>
+        <textarea id="cl_insight" placeholder="FACOLTATIVO. SE LA SCRIVI, COMPARIRÀ NELLE WORKING OBSERVATIONS."></textarea>
+
+        <div class="capturePrompt">
+          <div class="prepStep">COLLEGA I TRADE ALLA SESSIONE</div>
+          <h3>VUOI CARICARE SUBITO IL CSV?</h3>
+          <p class="hint">SE LO CARICHI ORA, IL DATA CAPTURE VERRÀ COLLEGATO A QUESTA SESSIONE, AL CHECK-IN / CHECK-OUT EMOTIVO E AL P&L DI GIORNATA.</p>
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="completeGuidedSession(true)">CHIUDI + CARICA CSV</button>
+          <button class="secondary" onclick="completeGuidedSession(false)">CHIUDI SENZA CSV</button>
+          <button class="secondary" onclick="showView('home')">ANNULLA</button>
+        </div>
       </div>
     </section>
   </main>
@@ -482,17 +1436,128 @@ input[type=range]{padding:0;border:0;background:transparent}
 <script>
 const KEY='trading_ecosystem_lab_v01';
 const ACTIVE_KEY='trading_ecosystem_lab_active';
+const ACTIVE_GUIDED_KEY='trading_ecosystem_lab_active_guided';
 let UI={};
 let exposureRows=0;
+let pendingSessionCsv=null;
+let pendingSessionScreenshot=null;
+let pendingScreenshotObjectUrl='';
+let pendingPreparation={
+  checkin:{pnlValue:null,emotion:''},
+  levels:{pdh:false,pdl:false,settlement:false,news:false},
+  regime:'',
+  checks:{}
+};
+let pendingCloseEmotion='';
+let pendingCaptureGuidedSessionId='';
 
 function nowTime(){return new Date().toTimeString().slice(0,5)}
-function today(){return new Date().toISOString().slice(0,10)}
+function today(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 function uid(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():'id_'+Date.now()+'_'+Math.random().toString(16).slice(2)}
 function n(v){const x=parseFloat(v);return Number.isFinite(x)?x:0}
 function money(v){const x=n(v);return (x<0?'-$':'$')+Math.abs(x).toLocaleString(undefined,{maximumFractionDigits:2})}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function getDB(){try{return JSON.parse(localStorage.getItem(KEY)||'{"sessions":[]}')}catch(e){return {sessions:[]}}}
-function setDB(db){localStorage.setItem(KEY,JSON.stringify(db))}
+function getDB(){
+  let db;
+  try{db=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){db={}}
+  if(!Array.isArray(db.sessions))db.sessions=[];
+  if(!Array.isArray(db.observations))db.observations=[];
+  if(!Array.isArray(db.guidedSessions))db.guidedSessions=[];
+  if(!Array.isArray(db.dataCaptures))db.dataCaptures=[];
+
+  // Working observations supplied during development.
+  // Each seed is added once only; deleting it later will not make it reappear.
+  if(!Array.isArray(db.seededObservationKeys))db.seededObservationKeys=[];
+
+  const seededObservations=[
+    {
+      seedKey:'europe-extreme-value-area',
+      date:'2026-10-02',
+      text:'Durante la sessione Europa, attendere di arrivare all’estremità prima di entrare; sarebbe inoltre opportuno che fosse presente una Value Area consistente, cioè una vera area di consolidamento.'
+    },
+    {
+      seedKey:'ny-open-gap-vs-prior-day',
+      date:'2026-10-02',
+      text:'Attenzione se all’apertura di NY sono in GAP rispetto a ieri.'
+    }
+  ];
+
+  const protocolObservationKeys=[
+    'coincident-pivot-levels',
+    'market-condition-structure-entry',
+    'regime-execution-moc',
+    'trend-weak-candle-box'
+  ];
+  db.observations=db.observations.filter(o=>!protocolObservationKeys.includes(o.seedKey));
+
+  seededObservations.forEach(seed=>{
+    if(!db.seededObservationKeys.includes(seed.seedKey)){
+      if(!db.observations.some(o=>o.seedKey===seed.seedKey)){
+        db.observations.push({
+          id:uid(),
+          seedKey:seed.seedKey,
+          date:seed.date,
+          text:seed.text,
+          source:'working'
+        });
+      }
+      db.seededObservationKeys.push(seed.seedKey);
+    }
+  });
+
+
+  if(!db.migratedLegacyCapturesV012){
+    db.sessions.forEach(s=>{
+      if((s.importedTrades&&s.importedTrades.length) || (s.screenshot&&s.screenshot.present)){
+        if(!db.dataCaptures.some(c=>c.legacySessionId===s.id)){
+          db.dataCaptures.push({
+            id:s.id,
+            legacySessionId:s.id,
+            date:s.date||'',
+            market:s.market||'',
+            csvFileName:s.csvFileName||'',
+            importedTrades:Array.isArray(s.importedTrades)?s.importedTrades:[],
+            screenshot:s.screenshot||{present:false},
+            createdAt:s.createdAt||new Date().toISOString(),
+            source:'legacy'
+          });
+        }
+      }
+    });
+    db.migratedLegacyCapturesV012=true;
+  }
+
+  // Migrate previous closed-session insights once, if any.
+  db.sessions.forEach(s=>{
+    const txt=s.review&&s.review.insight&&s.review.insight.trim();
+    if(txt && !db.observations.some(o=>o.sessionId===s.id)){
+      db.observations.push({
+        id:uid(),
+        sessionId:s.id,
+        date:s.date||'',
+        text:txt,
+        source:'session'
+      });
+    }
+  });
+
+  localStorage.setItem(KEY,JSON.stringify(db));
+  return db;
+}
+function setDB(db){
+  if(!Array.isArray(db.sessions))db.sessions=[];
+  if(!Array.isArray(db.observations))db.observations=[];
+  if(!Array.isArray(db.guidedSessions))db.guidedSessions=[];
+  if(!Array.isArray(db.dataCaptures))db.dataCaptures=[];
+  if(!Array.isArray(db.seededObservationKeys))db.seededObservationKeys=[];
+  localStorage.setItem(KEY,JSON.stringify(db))
+}
 function getActiveId(){return localStorage.getItem(ACTIVE_KEY)||''}
 function setActiveId(id){if(id)localStorage.setItem(ACTIVE_KEY,id);else localStorage.removeItem(ACTIVE_KEY)}
 function getActive(){
@@ -502,6 +1567,24 @@ function getActive(){
 function updateSession(updated){
   const db=getDB(); const i=db.sessions.findIndex(s=>s.id===updated.id);
   if(i>=0)db.sessions[i]=updated; else db.sessions.unshift(updated);
+  setDB(db);
+}
+
+function getActiveGuidedId(){return localStorage.getItem(ACTIVE_GUIDED_KEY)||''}
+function setActiveGuidedId(id){
+  if(id)localStorage.setItem(ACTIVE_GUIDED_KEY,id);
+  else localStorage.removeItem(ACTIVE_GUIDED_KEY);
+}
+function getActiveGuided(){
+  const id=getActiveGuidedId();
+  if(!id)return null;
+  return getDB().guidedSessions.find(s=>s.id===id)||null;
+}
+function updateGuidedSession(updated){
+  const db=getDB();
+  const i=db.guidedSessions.findIndex(s=>s.id===updated.id);
+  if(i>=0)db.guidedSessions[i]=updated;
+  else db.guidedSessions.unshift(updated);
   setDB(db);
 }
 
@@ -518,39 +1601,74 @@ function showView(v){
   scrollTo(0,0);
 }
 function openForm(name){
-  if(name==='exposure'){alert('Multi-Prop Exposure è temporaneamente inibito. Lo riattiveremo più avanti.');return}
-  if(name!=='start'&&!getActive()){alert('Start a session first.');return}
-  hideAll(); document.getElementById('form_'+name).classList.remove('hidden'); scrollTo(0,0);
-  const a=getActive();
-  if(name==='context'){
-    document.getElementById('cx_time').value=nowTime();
-    if(a){
-      const last=a.contexts[a.contexts.length-1];
-      if(last){document.getElementById('cx_phase').value=last.phase}
-    }
-  }
-  if(name==='block'){
-    document.getElementById('bl_start').value=nowTime();
-    document.getElementById('bl_end').value='';
-    if(a){
-      const last=a.contexts[a.contexts.length-1];
-      if(last){
-        document.getElementById('bl_phase').value=last.phase;
-        document.getElementById('bl_regime').value=last.regime||'Unclear';
-      }
-    }
-  }
-  if(name==='pnl'){document.getElementById('pn_time').value=nowTime()}
   if(name==='exposure'){
-    document.getElementById('ex_time').value=nowTime();
-    document.getElementById('exRows').innerHTML=''; exposureRows=0; addExposureRow(); addExposureRow(); updateExposurePreview();
+    alert('L’ESPOSIZIONE MULTI-PROP È TEMPORANEAMENTE DISABILITATA.');
+    return;
   }
-  if(name==='close'){
-    const lastPnl=a&&a.pnl.length?a.pnl[a.pnl.length-1].value:0;
-    document.getElementById('cl_pnl').value=lastPnl||'';
+
+  hideAll();
+  const target=document.getElementById('form_'+name);
+  if(!target){showView('home');return}
+  target.classList.remove('hidden');
+  window.scrollTo(0,0);
+
+  if(name==='start'){
+    const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
+    setSessionDate(linked?.date||today(),false);
+    resetSessionCsvForm();
+    resetScreenshotForm();
+    closeCalendar();
+    renderCaptureLinkBanner();
   }
 }
+function getGuidedById(id){
+  return getDB().guidedSessions.find(s=>s.id===id)||null;
+}
+
+function openDataCapture(guidedSessionId=''){
+  pendingCaptureGuidedSessionId=guidedSessionId||'';
+  openForm('start');
+}
+
+function cancelDataCapture(){
+  pendingCaptureGuidedSessionId='';
+  resetSessionCsvForm();
+  resetScreenshotForm();
+  showView('data');
+}
+
+function renderCaptureLinkBanner(){
+  const el=document.getElementById('captureLinkBanner');
+  if(!el)return;
+
+  const s=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
+  if(!s){
+    el.classList.add('hidden');
+    el.innerHTML='';
+    return;
+  }
+
+  const checkinPnl=s.checkin?.pnlValue;
+  const checkoutPnl=s.close?.pnlValue;
+  el.classList.remove('hidden');
+  el.innerHTML=`
+    <b>DATA CAPTURE COLLEGATO ALLA SESSIONE LIVE ${esc(s.startTime||'—')}–${esc(s.endTime||'—')}</b>
+    <div class="linkMeta">
+      CHECK-IN: ${esc(s.checkin?.emotion||'—')}${checkinPnl!=null?' · P&L '+money(checkinPnl):''}
+      · CHECK-OUT: ${esc(s.close?.emotion||'—')}${checkoutPnl!=null?' · P&L '+money(checkoutPnl):''}
+      · REGIME INIZIALE: ${esc(s.initialRegime||'—')}
+      <br>AUTO-FILTRO CSV: SOLO TRADE DEL ${esc(fmtDateIT(s.date))} CON ENTRATA TRA ${esc(s.startTime||'—')} E ${esc(s.endTime||'—')}.
+    </div>`;
+}
+
 function cancelForm(){showView('home')}
+
+
+document.addEventListener('input',e=>{
+  if(e.target && e.target.id==='guide_pnl'){
+    updatePreparationStatus();
+  }
+});
 
 document.querySelectorAll('.choices').forEach(g=>{
   g.addEventListener('click',e=>{
@@ -571,17 +1689,1033 @@ function clearChoice(group){
   const g=document.querySelector(`[data-group="${group}"]`); if(g)g.querySelectorAll('.choice').forEach(b=>b.classList.remove('active'));
 }
 
-function startSession(){
-  const db=getDB();
-  const s={
-    id:uid(),date:document.getElementById('st_date').value||today(),market:document.getElementById('st_market').value||'ES',
-    dll:n(document.getElementById('st_dll').value),wll:n(document.getElementById('st_wll').value),
-    maxGiveback:n(document.getElementById('st_giveback').value),props:document.getElementById('st_props').value.trim(),
-    startNote:document.getElementById('st_note').value.trim(),createdAt:new Date().toISOString(),status:'active',
-    contexts:[],blocks:[],pnl:[],exposures:[],review:null
+
+
+let calendarViewDate=new Date();
+
+function isoToLocalDate(iso){
+  const m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m?new Date(+m[1],+m[2]-1,+m[3]):new Date();
+}
+
+function formatDateIT(iso){
+  const m=String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m?`${m[3]}/${m[2]}/${m[1]}`:'';
+}
+
+function setSessionDate(iso,resetCsv=true){
+  const hidden=document.getElementById('st_date');
+  const display=document.getElementById('st_date_display');
+  if(hidden)hidden.value=iso;
+  if(display)display.value=formatDateIT(iso);
+  calendarViewDate=isoToLocalDate(iso);
+  if(resetCsv){
+    if(pendingSessionCsv)resetSessionCsvForm();
+    if(pendingSessionScreenshot)resetScreenshotForm();
+  }
+}
+
+function toggleCalendar(){
+  const popup=document.getElementById('calendarPopup');
+  if(!popup)return;
+  const iso=document.getElementById('st_date').value||today();
+  calendarViewDate=isoToLocalDate(iso);
+  popup.classList.toggle('hidden');
+  if(!popup.classList.contains('hidden'))renderCalendar();
+}
+
+function closeCalendar(){
+  const popup=document.getElementById('calendarPopup');
+  if(popup)popup.classList.add('hidden');
+}
+
+function shiftCalendarMonth(delta){
+  calendarViewDate=new Date(calendarViewDate.getFullYear(),calendarViewDate.getMonth()+delta,1);
+  renderCalendar();
+}
+
+function selectCalendarDate(iso){
+  setSessionDate(iso,true);
+  closeCalendar();
+}
+
+function renderCalendar(){
+  const popup=document.getElementById('calendarPopup');
+  if(!popup)return;
+
+  const y=calendarViewDate.getFullYear();
+  const m=calendarViewDate.getMonth();
+  const monthNames=['GENNAIO','FEBBRAIO','MARZO','APRILE','MAGGIO','GIUGNO','LUGLIO','AGOSTO','SETTEMBRE','OTTOBRE','NOVEMBRE','DICEMBRE'];
+  const dow=['L','M','M','G','V','S','D'];
+  const first=new Date(y,m,1);
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const start=(first.getDay()+6)%7;
+  const selected=document.getElementById('st_date').value;
+  const todayIso=today();
+
+  let cells=dow.map(d=>`<div class="calDow">${d}</div>`).join('');
+  for(let i=0;i<start;i++)cells+=`<button type="button" class="calDay outside" disabled></button>`;
+  for(let day=1;day<=daysInMonth;day++){
+    const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const cls=['calDay',iso===todayIso?'today':'',iso===selected?'selected':''].filter(Boolean).join(' ');
+    cells+=`<button type="button" class="${cls}" onclick="selectCalendarDate('${iso}')">${day}</button>`;
+  }
+
+  popup.innerHTML=`
+    <div class="calHead">
+      <button type="button" class="calNav" onclick="shiftCalendarMonth(-1)">‹</button>
+      <div class="calTitle">${monthNames[m]} ${y}</div>
+      <button type="button" class="calNav" onclick="shiftCalendarMonth(1)">›</button>
+    </div>
+    <div class="calGrid">${cells}</div>`;
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.datePickerWrap'))closeCalendar();
+});
+
+
+function openMediaDb(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open('trading_ecosystem_lab_media',1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains('screenshots')){
+        db.createObjectStore('screenshots',{keyPath:'sessionId'});
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+
+async function saveSessionScreenshot(sessionId,blob,meta={}){
+  const db=await openMediaDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('screenshots','readwrite');
+    tx.objectStore('screenshots').put({
+      sessionId,
+      blob,
+      name:meta.name||'screenshot-grafico.jpg',
+      type:blob.type||meta.type||'image/jpeg',
+      size:blob.size||0,
+      savedAt:new Date().toISOString()
+    });
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e)};
+  });
+}
+
+function compressImageBlob(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=1800;
+        const scale=Math.min(1,max/Math.max(img.width,img.height));
+        const w=Math.max(1,Math.round(img.width*scale));
+        const h=Math.max(1,Math.round(img.height*scale));
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        canvas.toBlob(
+          b=>b?resolve(b):reject(new Error('Compressione immagine non riuscita')),
+          'image/jpeg',
+          .84
+        );
+      };
+      img.onerror=()=>reject(new Error('Immagine non leggibile'));
+      img.src=reader.result;
+    };
+    reader.onerror=()=>reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function setPendingScreenshot(blob,name='screenshot-grafico'){
+  if(!blob || !String(blob.type||'').startsWith('image/')){
+    alert('SELEZIONA O INCOLLA UN FILE IMMAGINE.');
+    return;
+  }
+  try{
+    const compressed=await compressImageBlob(blob);
+    pendingSessionScreenshot={
+      blob:compressed,
+      name:(name||'screenshot-grafico').replace(/\.[^.]+$/,'')+'.jpg',
+      originalType:blob.type,
+      widthCompressed:true
+    };
+
+    if(pendingScreenshotObjectUrl)URL.revokeObjectURL(pendingScreenshotObjectUrl);
+    pendingScreenshotObjectUrl=URL.createObjectURL(compressed);
+
+    const img=document.getElementById('chartScreenshotPreview');
+    img.src=pendingScreenshotObjectUrl;
+    document.getElementById('screenshotEmpty').classList.add('hidden');
+    document.getElementById('screenshotPreviewWrap').classList.remove('hidden');
+    document.getElementById('screenshotPanel').focus();
+  }catch(err){
+    alert('IMPOSSIBILE PREPARARE LO SCREENSHOT: '+err.message);
+  }
+}
+
+function handleScreenshotPaste(event){
+  const items=[...(event.clipboardData?.items||[])];
+  const imageItem=items.find(x=>x.kind==='file' && String(x.type||'').startsWith('image/'));
+  if(!imageItem)return;
+  event.preventDefault();
+  const file=imageItem.getAsFile();
+  if(file)setPendingScreenshot(file,'screenshot-incollato');
+}
+
+function handleScreenshotFile(event){
+  const file=event.target.files&&event.target.files[0];
+  if(file)setPendingScreenshot(file,file.name);
+  event.target.value='';
+}
+
+function removePendingScreenshot(){
+  pendingSessionScreenshot=null;
+  if(pendingScreenshotObjectUrl){
+    URL.revokeObjectURL(pendingScreenshotObjectUrl);
+    pendingScreenshotObjectUrl='';
+  }
+  const img=document.getElementById('chartScreenshotPreview');
+  if(img)img.removeAttribute('src');
+  const empty=document.getElementById('screenshotEmpty');
+  if(empty)empty.classList.remove('hidden');
+  const wrap=document.getElementById('screenshotPreviewWrap');
+  if(wrap)wrap.classList.add('hidden');
+}
+
+function resetScreenshotForm(){
+  removePendingScreenshot();
+  const file=document.getElementById('st_screenshot_file');
+  if(file)file.value='';
+}
+
+
+function resetPreparation(){
+  pendingPreparation={
+    checkin:{pnlValue:null,emotion:''},
+    levels:{pdh:false,pdl:false,settlement:false,news:false},
+    regime:'',
+    checks:{}
   };
-  db.sessions.unshift(s); setDB(db); setActiveId(s.id);
+
+  document.querySelectorAll('#form_prepare .prepCheck').forEach(b=>b.classList.remove('checked'));
+  document.querySelectorAll('#form_prepare .regimeBtn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('#form_prepare .emotionBtn').forEach(b=>b.classList.remove('selected'));
+
+  const pnl=document.getElementById('guide_pnl');
+  if(pnl)pnl.value='';
+
+  ['prepConsolidation','prepTrend','prepUnclear'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.add('hidden');
+  });
+  updatePreparationStatus();
+}
+
+function beginGuidedSession(){
+  if(getActiveGuided()){
+    alert('C’È GIÀ UNA SESSIONE DI TRADING ATTIVA.');
+    return;
+  }
+  resetPreparation();
+  hideAll();
+  document.getElementById('form_prepare').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+
+function selectEmotion(emotion){
+  pendingPreparation.checkin.emotion=emotion;
+  document.querySelectorAll('#emotionButtons .emotionBtn').forEach(b=>{
+    b.classList.toggle('selected',b.dataset.emotion===emotion);
+  });
+  updatePreparationStatus();
+}
+
+function togglePrepCheck(btn){
+  btn.classList.toggle('checked');
+  const key=btn.dataset.key;
+  if(['pdh','pdl','settlement','news'].includes(key)){
+    pendingPreparation.levels[key]=btn.classList.contains('checked');
+  }else{
+    pendingPreparation.checks[key]=btn.classList.contains('checked');
+  }
+  updatePreparationStatus();
+}
+
+function selectPrepRegime(regime){
+  pendingPreparation.regime=regime;
+  document.querySelectorAll('#form_prepare .regimeBtn[data-regime]').forEach(b=>{
+    b.classList.toggle('selected',b.dataset.regime===regime);
+  });
+  document.getElementById('prepConsolidation').classList.toggle('hidden',regime!=='CONSOLIDAMENTO');
+  document.getElementById('prepTrend').classList.toggle('hidden',regime!=='SPOSTAMENTO / TREND');
+  document.getElementById('prepUnclear').classList.toggle('hidden',regime!=='NON CHIARO');
+  updatePreparationStatus();
+}
+
+function preparationReady(){
+  const l=pendingPreparation.levels;
+  const c=pendingPreparation.checkin;
+  return !!(
+    c.emotion &&
+    l.pdh && l.pdl && l.settlement && l.news &&
+    pendingPreparation.regime
+  );
+}
+
+function updatePreparationStatus(){
+  const btn=document.getElementById('prepStartBtn');
+  const status=document.getElementById('prepStatus');
+  if(!btn||!status)return;
+
+  const pnlRaw=document.getElementById('guide_pnl')?.value;
+  pendingPreparation.checkin.pnlValue=(pnlRaw===''||pnlRaw==null)?null:n(pnlRaw);
+  const ready=preparationReady();
+  btn.classList.toggle('prepStartDisabled',!ready);
+  status.classList.toggle('ready',ready);
+
+  if(!pendingPreparation.checkin.emotion){
+    status.textContent='FAI IL CHECK-IN EMOTIVO.';
+  }else if(!pendingPreparation.levels.pdh || !pendingPreparation.levels.pdl || !pendingPreparation.levels.settlement){
+    status.textContent='TRACCIA E CONFERMA PDH, PDL E SETTLEMENT.';
+  }else if(!pendingPreparation.levels.news){
+    status.textContent='VERIFICA LE NEWS RELEASE DELLA GIORNATA.';
+  }else if(!pendingPreparation.regime){
+    status.textContent='ORA CLASSIFICA IL MERCATO.';
+  }else{
+    status.textContent=`PRONTO · ${pendingPreparation.checkin.emotion} · ${pendingPreparation.regime}`;
+  }
+}
+
+async function finalizeSessionFromPreparation(){
+  if(!preparationReady()){
+    updatePreparationStatus();
+    return;
+  }
+
+  updatePreparationStatus();
+
+  const s={
+    id:uid(),
+    date:today(),
+    startedAt:new Date().toISOString(),
+    startTime:nowTime(),
+    status:'active',
+    dll:1000,
+    checkin:{
+      pnlValue:pendingPreparation.checkin.pnlValue,
+      emotion:pendingPreparation.checkin.emotion
+    },
+    levels:{pdh:pendingPreparation.levels.pdh,pdl:pendingPreparation.levels.pdl,settlement:pendingPreparation.levels.settlement},
+    news:{verified:pendingPreparation.levels.news},
+    initialRegime:pendingPreparation.regime,
+    checklist:{...pendingPreparation.checks},
+    method:{
+      regime:'P&F',
+      structure:'BAR CHART',
+      entry:'FOOTPRINT / DOM'
+    },
+    trendCombos:['VWAP + 9EMA','PINBAR + 9EMA','VWAP + PINBAR']
+  };
+
+  const db=getDB();
+  db.guidedSessions.unshift(s);
+  setDB(db);
+  setActiveGuidedId(s.id);
   showView('home');
+}
+
+
+function parseTradeDurationSeconds(value){
+  const s=String(value||'').trim();
+  if(!s)return null;
+
+  // Topstep examples: HH:MM:SS.fffffff
+  const m=s.match(/^(\d+):(\d{2}):(\d{2})(?:\.(\d+))?$/);
+  if(m){
+    const h=Number(m[1])||0;
+    const min=Number(m[2])||0;
+    const sec=Number(m[3])||0;
+    const frac=m[4]?Number('0.'+m[4]):0;
+    return h*3600+min*60+sec+frac;
+  }
+
+  return null;
+}
+
+function tradeDurationSeconds(t){
+  if(t && Number.isFinite(Number(t.durationSeconds)))return Number(t.durationSeconds);
+
+  const parsed=parseTradeDurationSeconds(t?.tradeDuration);
+  if(parsed!=null)return parsed;
+
+  // Fallback for older imported records.
+  const a=String(t?.enteredAt||'').trim();
+  const b=String(t?.exitedAt||'').trim();
+  const rx=/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s*([+-]\d{2}:\d{2})$/;
+  const ma=a.match(rx), mb=b.match(rx);
+  if(ma&&mb){
+    const toIso=m=>{
+      const mm=String(m[1]).padStart(2,'0');
+      const dd=String(m[2]).padStart(2,'0');
+      return `${m[3]}-${mm}-${dd}T${m[4]}:${m[5]}:${m[6]}${m[7]}`;
+    };
+    const da=new Date(toIso(ma)), db=new Date(toIso(mb));
+    const sec=(db-da)/1000;
+    return Number.isFinite(sec)&&sec>=0?sec:null;
+  }
+  return null;
+}
+
+function formatDuration(seconds){
+  if(seconds==null || !Number.isFinite(Number(seconds)))return '—';
+  const s=Math.max(0,Number(seconds));
+  if(s<60)return `${Math.round(s)}S`;
+  const min=Math.floor(s/60);
+  const sec=Math.round(s%60);
+  if(min<60)return sec?`${min}M ${sec}S`:`${min}M`;
+  const h=Math.floor(min/60);
+  const rem=min%60;
+  return rem?`${h}H ${rem}M`:`${h}H`;
+}
+
+function median(values){
+  const a=values.filter(v=>Number.isFinite(v)).sort((x,y)=>x-y);
+  if(!a.length)return null;
+  const m=Math.floor(a.length/2);
+  return a.length%2?a[m]:(a[m-1]+a[m])/2;
+}
+
+function durationBucket(seconds){
+  if(seconds==null)return 'NON DISPONIBILE';
+  if(seconds<=15)return '0–15S';
+  if(seconds<=30)return '16–30S';
+  if(seconds<=60)return '31–60S';
+  if(seconds<=120)return '1–2M';
+  if(seconds<=300)return '2–5M';
+  return '> 5M';
+}
+
+
+function blobToDataUrl(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function dataUrlToBlob(dataUrl){
+  const parts=String(dataUrl||'').split(',');
+  if(parts.length<2)throw new Error('Screenshot non valido');
+  const mime=(parts[0].match(/data:([^;]+)/)||[])[1]||'application/octet-stream';
+  const bin=atob(parts.slice(1).join(','));
+  const bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return new Blob([bytes],{type:mime});
+}
+
+async function getAllStoredScreenshots(){
+  const db=await openMediaDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('screenshots','readonly');
+    const req=tx.objectStore('screenshots').getAll();
+    req.onsuccess=()=>{const rows=req.result||[];db.close();resolve(rows)};
+    req.onerror=()=>{const e=req.error;db.close();reject(e)};
+  });
+}
+
+async function clearStoredScreenshots(){
+  const db=await openMediaDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('screenshots','readwrite');
+    tx.objectStore('screenshots').clear();
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e)};
+  });
+}
+
+async function restoreScreenshots(rows){
+  await clearStoredScreenshots();
+  if(!Array.isArray(rows) || !rows.length)return;
+
+  const db=await openMediaDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction('screenshots','readwrite');
+    const store=tx.objectStore('screenshots');
+
+    try{
+      rows.forEach(r=>{
+        if(!r || !r.sessionId || !r.dataUrl)return;
+        const blob=dataUrlToBlob(r.dataUrl);
+        store.put({
+          sessionId:r.sessionId,
+          blob,
+          name:r.name||'screenshot-grafico.jpg',
+          type:blob.type||r.type||'image/jpeg',
+          size:blob.size,
+          savedAt:r.savedAt||new Date().toISOString()
+        });
+      });
+    }catch(err){
+      db.close();
+      reject(err);
+      return;
+    }
+
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{const e=tx.error;db.close();reject(e)};
+  });
+}
+
+function serializableAgg(mapObj){
+  return Object.entries(mapObj).map(([key,a])=>({
+    key,
+    trades:a.count||0,
+    pnl:a.pnl||0,
+    wins:a.wins||0,
+    winRate:(a.count?((a.wins||0)/a.count*100):0),
+    avgPnl:(a.count?((a.pnl||0)/a.count):0),
+    avgAtr:(a.atrN?((a.atrSum||0)/a.atrN):null),
+    avgDurationSeconds:(a.durN?((a.durSum||0)/a.durN):null)
+  }));
+}
+
+function buildFrameworkSnapshot(){
+  return {
+    purpose:'TRADING ECOSYSTEM LAB',
+    references:['PREVIOUS DAY HIGH','PREVIOUS DAY LOW','SETTLEMENT'],
+    preSession:{
+      newsReleaseVerification:true,
+      workflow:[
+        {tool:'P&F',purpose:'REGIME'},
+        {tool:'BAR CHART',purpose:'STRUTTURA'},
+        {tool:'FOOTPRINT / DOM',purpose:'ENTRY'}
+      ]
+    },
+    chartLegend:{
+      vwapAsia:'NERA',
+      vwapLondon:'ROSSA',
+      vwapNY:'BLU',
+      standardDeviations:true,
+      additionalLevels:['PREVIOUS DAY HIGH','PREVIOUS DAY LOW','SETTLEMENT']
+    },
+    consolidation:{
+      principle:"LAVORA L'AREA, NON INSEGUIRE IL PREZZO",
+      guidelines:['IDENTIFICA AREA / VALUE AREA','LAVORA GLI ESTREMI','PICCOLI SCALP','LIMIT ORDER','SENZA STOP — LINEA GUIDA ATTUALE DA VALIDARE']
+    },
+    displacementTrend:{
+      principle:'LAVORA LA STRUTTURA',
+      guidelines:['CERCA RELAZIONE CON VWAP','USA STOP LOSS','TRACCIA RETTANGOLO SULLA WEAK CANDLE SE PRESENTE','DUE PIVOT HIGH O DUE PIVOT LOW COINCIDENTI → SUPPORTO / RESISTENZA'],
+      highPriorityCombos:['VWAP + 9EMA','PINBAR + 9EMA','VWAP + PINBAR']
+    },
+    moc:'CON ALTA VOLATILITÀ, CONTESTO DA STUDIARE PER TRADE DI MAGGIORE ESTENSIONE / GRAND SLAM',
+    multiProp:'TEMA PRESENTE MA VOLUTAMENTE RIMANDATO'
+  };
+}
+
+function buildAnalyticsSnapshot(){
+  const db=getDB();
+  const trades=uniqueCapturedTrades();
+  const durations=trades.map(tradeDurationSeconds).filter(v=>v!=null && Number.isFinite(v));
+  const winDur=trades.filter(t=>n(t.pnl)>0).map(tradeDurationSeconds).filter(v=>v!=null && Number.isFinite(v));
+  const lossDur=trades.filter(t=>n(t.pnl)<0).map(tradeDurationSeconds).filter(v=>v!=null && Number.isFinite(v));
+
+  const checkinCounts={};
+  const checkoutCounts={};
+  const transitionCounts={};
+
+  (db.guidedSessions||[]).forEach(s=>{
+    const cin=s.checkin?.emotion;
+    const cout=s.close?.emotion;
+    if(cin)checkinCounts[cin]=(checkinCounts[cin]||0)+1;
+    if(cout)checkoutCounts[cout]=(checkoutCounts[cout]||0)+1;
+    if(cin&&cout){
+      const key=`${cin} → ${cout}`;
+      transitionCounts[key]=(transitionCounts[key]||0)+1;
+    }
+  });
+
+  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+
+  return {
+    totals:{
+      guidedSessions:(db.guidedSessions||[]).length,
+      closedGuidedSessions:(db.guidedSessions||[]).filter(s=>s.status==='closed').length,
+      dataCaptures:(db.dataCaptures||[]).length,
+      uniqueTrades:trades.length,
+      grossPnl:trades.reduce((a,t)=>a+n(t.pnl),0),
+      fees:trades.reduce((a,t)=>a+n(t.fees),0)
+    },
+    byTradingSession:serializableAgg(tradeAgg(trades,t=>t.session)),
+    byContext:serializableAgg(tradeAgg(trades,t=>t.context)),
+    byDurationBucket:serializableAgg(tradeAgg(trades,t=>durationBucket(tradeDurationSeconds(t)))),
+    tradeDuration:{
+      averageSeconds:avg(durations),
+      medianSeconds:median(durations),
+      averageWinningTradeSeconds:avg(winDur),
+      averageLosingTradeSeconds:avg(lossDur)
+    },
+    emotions:{
+      checkin:checkinCounts,
+      checkout:checkoutCounts,
+      transitions:transitionCounts
+    }
+  };
+}
+
+async function buildCompleteExportPackage(){
+  const screenshotRows=await getAllStoredScreenshots();
+  const screenshots=[];
+
+  for(const row of screenshotRows){
+    if(!row || !row.blob)continue;
+    screenshots.push({
+      sessionId:row.sessionId,
+      name:row.name||'screenshot-grafico.jpg',
+      type:row.type||row.blob.type||'image/jpeg',
+      size:row.size||row.blob.size||0,
+      savedAt:row.savedAt||null,
+      dataUrl:await blobToDataUrl(row.blob)
+    });
+  }
+
+  return {
+    format:'TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT',
+    schemaVersion:1,
+    appVersion:'0.16',
+    exportedAt:new Date().toISOString(),
+    instructionsForAnalysis:[
+      'Treat data as cumulative historical state.',
+      'Use guidedSessions for live-session check-in/check-out and emotional state.',
+      'Use dataCaptures for captured executions and screenshots.',
+      'Use guidedSessionId on a data capture to link trades to a specific live session.',
+      'Screenshots are embedded as data URLs and keyed by sessionId/capture id.',
+      'Do not infer a trade regime from the live-session initial regime: per-trade context remains independently classified.'
+    ],
+    framework:buildFrameworkSnapshot(),
+    analyticsSnapshot:buildAnalyticsSnapshot(),
+    data:getDB(),
+    screenshots
+  };
+}
+
+async function exportCompleteLab(){
+  try{
+    const pkg=await buildCompleteExportPackage();
+    const blob=new Blob([JSON.stringify(pkg,null,2)],{type:'application/json;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+    a.download=`trading_ecosystem_lab_complete_${stamp}.json`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }catch(err){
+    alert('EXPORT COMPLETO FALLITO: '+(err?.message||err));
+  }
+}
+
+function parseCsvLine(line){
+  const out=[]; let cur=''; let quoted=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){
+      if(quoted && line[i+1]==='"'){cur+='"';i++}
+      else quoted=!quoted;
+    }else if(ch===',' && !quoted){
+      out.push(cur);cur='';
+    }else{
+      cur+=ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+function normalizeCsvDateTime(value){
+  // Topstep example: 10/01/2026 09:49:25 +02:00 = MM/DD/YYYY
+  const s=String(value||'').trim();
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s*([+-]\d{2}:\d{2})?/);
+  if(!m)return null;
+  const mm=m[1].padStart(2,'0');
+  const dd=m[2].padStart(2,'0');
+  return {
+    isoDate:`${m[3]}-${mm}-${dd}`,
+    time:`${m[4]}:${m[5]}:${m[6]}`,
+    offset:m[7]||'',
+    original:s
+  };
+}
+
+
+function zonedPartsFromCsvDateTime(value, timeZone){
+  const s=String(value||'').trim();
+  const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s*([+-]\d{2}:\d{2})$/);
+  if(!m)return null;
+
+  // CSV format is MM/DD/YYYY
+  const mm=String(m[1]).padStart(2,'0');
+  const dd=String(m[2]).padStart(2,'0');
+  const iso=`${m[3]}-${mm}-${dd}T${m[4]}:${m[5]}:${m[6]}${m[7]}`;
+  const d=new Date(iso);
+  if(Number.isNaN(d.getTime()))return null;
+
+  const fmt=new Intl.DateTimeFormat('en-GB',{
+    timeZone,
+    year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',second:'2-digit',
+    hourCycle:'h23'
+  });
+  const p={};
+  fmt.formatToParts(d).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value});
+  return {
+    year:+p.year,month:+p.month,day:+p.day,
+    hour:+p.hour,minute:+p.minute,second:+p.second
+  };
+}
+
+function compareHm(h1,m1,h2,m2){
+  return (h1*60+m1)-(h2*60+m2);
+}
+
+function classifyTradingSession(enteredAt){
+  const london=zonedPartsFromCsvDateTime(enteredAt,'Europe/London');
+  const ny=zonedPartsFromCsvDateTime(enteredAt,'America/New_York');
+  if(!london || !ny)return 'UNKNOWN';
+
+  // NY starts at 09:30 New York local time.
+  if(compareHm(ny.hour,ny.minute,9,30)>=0)return 'NY';
+
+  // London/Europe starts at 08:00 London local time.
+  if(compareHm(london.hour,london.minute,8,0)>=0)return 'LONDON';
+
+  return 'ASIAN';
+}
+
+function tradeSessionClass(session){
+  if(session==='ASIAN')return 'session-asian';
+  if(session==='LONDON')return 'session-london';
+  if(session==='NY')return 'session-ny';
+  return '';
+}
+
+function renderImportedTradesTable(){
+  const box=document.getElementById('tradeTableContainer');
+  if(!box)return;
+  if(!pendingSessionCsv || !pendingSessionCsv.trades.length){
+    box.classList.add('hidden');
+    box.innerHTML='';
+    return;
+  }
+
+  box.classList.remove('hidden');
+  const trades=pendingSessionCsv.trades;
+
+  box.innerHTML=`
+    <table class="tradeTable">
+      <thead>
+        <tr>
+          <th>SESSIONE</th>
+          <th>ATR</th>
+          <th>CONTESTO</th>
+          <th>ID</th>
+          <th>CONTRATTO</th>
+          <th>ENTRATA</th>
+          <th>USCITA</th>
+          <th>PREZZO ENTRATA</th>
+          <th>PREZZO USCITA</th>
+          <th>SIZE</th>
+          <th>DIREZIONE</th>
+          <th>PNL</th>
+          <th>COSTI</th>
+          <th>DURATA</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${trades.map((t,i)=>`
+          <tr>
+            <td><span class="sessionTag ${tradeSessionClass(t.session)}">${esc(t.session)}</span></td>
+            <td>
+              <input type="number" step="0.01" placeholder="ATR"
+                value="${t.atr??''}"
+                oninput="updateImportedTradeField(${i},'atr',this.value)">
+            </td>
+            <td>
+              <select onchange="updateImportedTradeField(${i},'context',this.value)">
+                <option value="" ${!t.context?'selected':''}>—</option>
+                <option value="CONSOLIDAMENTO" ${t.context==='CONSOLIDAMENTO'?'selected':''}>CONSOLIDAMENTO</option>
+                <option value="TREND" ${t.context==='TREND'?'selected':''}>TREND</option>
+              </select>
+            </td>
+            <td>${esc(t.id)}</td>
+            <td>${esc(t.contractName)}</td>
+            <td>${esc(t.enteredAt)}</td>
+            <td>${esc(t.exitedAt)}</td>
+            <td>${t.entryPrice}</td>
+            <td>${t.exitPrice}</td>
+            <td>${t.size}</td>
+            <td>${esc(t.side)}</td>
+            <td class="${t.pnl>=0?'tradePositive':'tradeNegative'}">${money(t.pnl)}</td>
+            <td>${money(t.fees)}</td>
+            <td>${esc(t.tradeDuration)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+function updateImportedTradeField(index,field,value){
+  if(!pendingSessionCsv || !pendingSessionCsv.trades[index])return;
+  if(field==='atr'){
+    pendingSessionCsv.trades[index].atr=value===''?null:n(value);
+  }else{
+    pendingSessionCsv.trades[index][field]=value;
+  }
+}
+function parseTopstepCsv(text){
+  const lines=String(text||'')
+    .replace(/^\uFEFF/,'')
+    .split(/\r?\n/)
+    .filter(line=>line.trim());
+
+  if(lines.length<2)throw new Error('Il CSV non contiene trade.');
+
+  const headers=parseCsvLine(lines[0]).map(x=>x.trim());
+  const expected=['Id','ContractName','EnteredAt','ExitedAt','EntryPrice','ExitPrice','Fees','PnL','Size','Type','TradeDay','TradeDuration','Commissions'];
+  const missing=expected.filter(h=>!headers.includes(h));
+  if(missing.length)throw new Error('Colonne mancanti: '+missing.join(', '));
+
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const vals=parseCsvLine(lines[i]);
+    const raw={};
+    headers.forEach((h,j)=>raw[h]=(vals[j]??'').trim());
+    if(!raw.Id && !raw.ContractName)continue;
+
+    const entered=normalizeCsvDateTime(raw.EnteredAt);
+    const exited=normalizeCsvDateTime(raw.ExitedAt);
+
+    rows.push({
+      id:raw.Id,
+      contractName:raw.ContractName,
+      enteredAt:raw.EnteredAt,
+      exitedAt:raw.ExitedAt,
+      enteredDate:entered?entered.isoDate:'',
+      enteredTime:entered?entered.time:'',
+      exitedTime:exited?exited.time:'',
+      entryPrice:n(raw.EntryPrice),
+      exitPrice:n(raw.ExitPrice),
+      fees:n(raw.Fees),
+      pnl:n(raw.PnL),
+      size:n(raw.Size),
+      side:raw.Type,
+      tradeDay:raw.TradeDay,
+      tradeDuration:raw.TradeDuration,
+      durationSeconds:parseTradeDurationSeconds(raw.TradeDuration),
+      commissions:n(raw.Commissions),
+      session:classifyTradingSession(raw.EnteredAt),
+      atr:null,
+      context:''
+    });
+  }
+
+  if(!rows.length)throw new Error('Nessuna riga trade valida trovata.');
+  return rows;
+}
+
+
+function hmToSeconds(value){
+  const m=String(value||'').match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if(!m)return null;
+  return Number(m[1])*3600+Number(m[2])*60+Number(m[3]||0);
+}
+
+function filterTradesForLinkedGuidedSession(trades){
+  if(!pendingCaptureGuidedSessionId)return trades;
+  const s=getGuidedById(pendingCaptureGuidedSessionId);
+  if(!s)return trades;
+
+  const start=hmToSeconds(s.startTime);
+  const end=hmToSeconds(s.endTime);
+  if(start==null || end==null)return trades;
+
+  return trades.filter(t=>{
+    const entry=hmToSeconds(t.enteredTime);
+    return entry!=null && entry>=start && entry<=end;
+  });
+}
+
+function handleSessionCsv(event){
+  const file=event.target.files&&event.target.files[0];
+  if(!file)return;
+
+  const selectedDate=document.getElementById('st_date').value;
+  if(!selectedDate){
+    alert('SELEZIONA PRIMA LA DATA DELLA SESSIONE.');
+    event.target.value='';
+    return;
+  }
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const allTrades=parseTopstepCsv(reader.result);
+      const dateTrades=allTrades.filter(t=>t.enteredDate===selectedDate);
+      const trades=filterTradesForLinkedGuidedSession(dateTrades);
+
+      if(!trades.length){
+        pendingSessionCsv=null;
+        document.getElementById('csvStatus').classList.add('hidden');
+        document.getElementById('csvFilterNote').classList.remove('hidden');
+        const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
+        document.getElementById('csvFilterNote').textContent=linked
+          ?`NESSUN TRADE TROVATO NELLA SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} DEL ${selectedDate}.`
+          :`NESSUN TRADE DEL CSV COINCIDE CON LA DATA ${selectedDate}.`;
+        document.getElementById('tradeTableContainer').classList.add('hidden');
+        document.getElementById('tradeTableContainer').innerHTML='';
+        document.getElementById('csvDrop').classList.remove('loaded');
+        return;
+      }
+
+      pendingSessionCsv={fileName:file.name,trades,allRowsCount:allTrades.length,dateRowsCount:dateTrades.length,sessionDate:selectedDate,guidedSessionId:pendingCaptureGuidedSessionId||''};
+
+      const first=trades[0];
+      const contracts=[...new Set(trades.map(t=>t.contractName).filter(Boolean))];
+
+      const rawPnl=trades.reduce((a,t)=>a+n(t.pnl),0);
+      const totalFees=trades.reduce((a,t)=>a+n(t.fees),0);
+
+      const status=document.getElementById('csvStatus');
+      status.classList.remove('hidden');
+      status.innerHTML=`
+        <span class="badge accent">${esc(file.name)}</span>
+        <span class="badge">${contracts.length?esc(contracts.join(' / ')):'N/D'}</span>
+        <span class="badge">${trades.length} TRADE</span>
+        <span class="badge">P&L LORDO ${money(rawPnl)}</span>
+        <span class="badge">COSTI ${money(totalFees)}</span>`;
+
+      const note=document.getElementById('csvFilterNote');
+      note.classList.remove('hidden');
+      const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
+      if(linked){
+        const outsideWindow=dateTrades.length-trades.length;
+        const otherDate=allTrades.length-dateTrades.length;
+        note.textContent=`SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} · ${trades.length} TRADE COLLEGATI · ${outsideWindow} TRADE DELLA STESSA DATA FUORI FINESTRA · ${otherDate} DI ALTRA DATA.`;
+      }else{
+        const excluded=allTrades.length-trades.length;
+        note.textContent=`DATA SESSIONE: ${selectedDate} · ${trades.length} TRADE INCLUSI · ${excluded} ESCLUSI DAL CSV PER DATA DIFFERENTE.`;
+      }
+
+      document.getElementById('csvDrop').classList.add('loaded');
+      renderImportedTradesTable();
+    }catch(err){
+      pendingSessionCsv=null;
+      document.getElementById('csvStatus').classList.add('hidden');
+      document.getElementById('csvFilterNote').classList.add('hidden');
+      document.getElementById('tradeTableContainer').classList.add('hidden');
+      document.getElementById('tradeTableContainer').innerHTML='';
+      document.getElementById('csvDrop').classList.remove('loaded');
+      alert('CSV NON RICONOSCIUTO: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetSessionCsvForm(){
+  pendingSessionCsv=null;
+  const file=document.getElementById('st_csv');
+  if(file)file.value='';
+  const status=document.getElementById('csvStatus');
+  if(status){
+    status.innerHTML='';
+    status.classList.add('hidden');
+  }
+  const drop=document.getElementById('csvDrop');
+  if(drop)drop.classList.remove('loaded');
+  const note=document.getElementById('csvFilterNote');
+  if(note){note.textContent='';note.classList.add('hidden')}
+  const box=document.getElementById('tradeTableContainer');
+  if(box){box.innerHTML='';box.classList.add('hidden')}
+}
+
+async function saveDataCapture(){
+  const date=document.getElementById('st_date').value||today();
+  const imported=pendingSessionCsv?pendingSessionCsv.trades:[];
+  const screenshotToSave=pendingSessionScreenshot;
+
+  if(!imported.length && !screenshotToSave){
+    alert('CARICA ALMENO UN CSV O UNO SCREENSHOT.');
+    return;
+  }
+
+  const linkedGuided=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
+  const capture={
+    id:uid(),
+    date,
+    guidedSessionId:linkedGuided?linkedGuided.id:'',
+    guidedSessionWindow:linkedGuided?{startTime:linkedGuided.startTime,endTime:linkedGuided.endTime}:null,
+    market:(imported.length&&imported[0].contractName)?imported[0].contractName:'',
+    csvFileName:pendingSessionCsv?pendingSessionCsv.fileName:'',
+    importedTrades:imported,
+    screenshot:{
+      present:!!screenshotToSave,
+      name:screenshotToSave?screenshotToSave.name:'',
+      storage:'indexedDB'
+    },
+    chartLegend:{
+      vwapAsia:'NERA',
+      vwapLondon:'ROSSA',
+      vwapNY:'BLU',
+      standardDeviations:true,
+      levels:['PREVIOUS DAY HIGH','PREVIOUS DAY LOW','SETTLEMENT']
+    },
+    createdAt:new Date().toISOString()
+  };
+
+  const db=getDB();
+  db.dataCaptures.unshift(capture);
+  setDB(db);
+
+  if(screenshotToSave){
+    try{
+      await saveSessionScreenshot(capture.id,screenshotToSave.blob,{
+        name:screenshotToSave.name,
+        type:screenshotToSave.blob.type
+      });
+    }catch(err){
+      capture.screenshot.present=false;
+      capture.screenshot.error=String(err&&err.message?err.message:err);
+      const db2=getDB();
+      const i=db2.dataCaptures.findIndex(c=>c.id===capture.id);
+      if(i>=0)db2.dataCaptures[i]=capture;
+      setDB(db2);
+      alert('IL DATA CAPTURE È STATO SALVATO, MA LO SCREENSHOT NON È STATO MEMORIZZATO.');
+    }
+  }
+
+  if(linkedGuided){
+    const db3=getDB();
+    const gs=db3.guidedSessions.find(x=>x.id===linkedGuided.id);
+    if(gs){
+      if(!Array.isArray(gs.dataCaptureIds))gs.dataCaptureIds=[];
+      if(!gs.dataCaptureIds.includes(capture.id))gs.dataCaptureIds.push(capture.id);
+      setDB(db3);
+    }
+  }
+
+  pendingCaptureGuidedSessionId='';
+  resetSessionCsvForm();
+  resetScreenshotForm();
+  showView('data');
 }
 function saveContext(){
   const s=getActive(); if(!s)return;
@@ -655,15 +2789,84 @@ function saveExposure(){
     note:document.getElementById('ex_note').value.trim(),createdAt:new Date().toISOString()};
   s.exposures.push(x);updateSession(s);clearChoice('ex_rules');document.getElementById('ex_note').value='';showView('home');
 }
-function closeSession(){
-  const s=getActive();if(!s)return;
-  const review={finalPnl:n(document.getElementById('cl_pnl').value),energy:n(document.getElementById('cl_energy').value),
-    sync:n(document.getElementById('cl_sync').value),revenge:choiceVal('cl_revenge')||'Unclear',
-    easy:document.getElementById('cl_easy').value.trim(),friction:document.getElementById('cl_friction').value.trim(),
-    insight:document.getElementById('cl_insight').value.trim(),closedAt:new Date().toISOString()};
-  s.review=review;s.status='closed';updateSession(s);setActiveId('');
-  clearChoice('cl_revenge');['cl_pnl','cl_easy','cl_friction','cl_insight'].forEach(id=>document.getElementById(id).value='');
-  showView('data');
+function openGuidedClose(){
+  const s=getActiveGuided();
+  if(!s)return;
+  pendingCloseEmotion='';
+  document.querySelectorAll('#closeEmotionButtons .emotionBtn').forEach(b=>b.classList.remove('selected'));
+
+  const start=new Date(s.startedAt);
+  const mins=Math.max(0,Math.round((Date.now()-start.getTime())/60000));
+  const h=Math.floor(mins/60);
+  const m=mins%60;
+  document.getElementById('cl_duration').value=h?`${h}H ${m}M`:`${m} MIN`;
+  document.getElementById('cl_pnl').value='';
+  document.getElementById('cl_insight').value='';
+
+  hideAll();
+  document.getElementById('form_close').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+function selectCloseEmotion(emotion){
+  pendingCloseEmotion=emotion;
+  document.querySelectorAll('#closeEmotionButtons .emotionBtn').forEach(b=>{
+    b.classList.toggle('selected',b.dataset.emotion===emotion);
+  });
+}
+
+function persistGuidedClose(s,pnlValue,insight){
+  s.status='closed';
+  s.endedAt=new Date().toISOString();
+  s.endTime=nowTime();
+  s.close={
+    pnlValue,
+    emotion:pendingCloseEmotion,
+    insight
+  };
+
+  const db=getDB();
+  const i=db.guidedSessions.findIndex(x=>x.id===s.id);
+  if(i>=0)db.guidedSessions[i]=s;
+
+  if(insight){
+    db.observations.push({
+      id:uid(),
+      guidedSessionId:s.id,
+      date:s.date,
+      text:insight,
+      source:'guided-session'
+    });
+  }
+
+  setDB(db);
+  setActiveGuidedId('');
+  pendingCloseEmotion='';
+}
+
+function completeGuidedSession(loadCsv){
+  const s=getActiveGuided();
+  if(!s)return;
+
+  if(!pendingCloseEmotion){
+    alert('SELEZIONA LO STATO EMOTIVO AL CHECK-OUT.');
+    return;
+  }
+
+  const pnlRaw=document.getElementById('cl_pnl').value;
+  if(pnlRaw===''){
+    alert('INDICA IL P&L DI GIORNATA ATTUALE.');
+    return;
+  }
+
+  const insight=document.getElementById('cl_insight').value.trim();
+  persistGuidedClose(s,n(pnlRaw),insight);
+
+  if(loadCsv){
+    openDataCapture(s.id);
+  }else{
+    showView('home');
+  }
 }
 
 function allTimeline(s){
@@ -674,29 +2877,162 @@ function allTimeline(s){
   s.exposures.forEach(x=>a.push({...x,_sort:x.time||'00:00'}));
   return a.sort((x,y)=>x._sort.localeCompare(y._sort));
 }
+function fmtDateIT(iso){
+  if(!iso)return '';
+  const p=iso.split('-');
+  return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;
+}
+
+function renderCarryForward(){
+  const el=document.getElementById('carryForwardList');
+  if(!el)return;
+  const db=getDB();
+  const items=[...db.observations].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  el.innerHTML=items.length?items.map(o=>`
+    <div class="obsCard" data-obs="${esc(o.id)}">
+      <div class="obsMeta">
+        <div class="obsLabel">WORKING OBSERVATION · ${esc(fmtDateIT(o.date))}</div>
+        <div class="obsActions">
+          <button class="obsIcon" title="Modifica" aria-label="Modifica osservazione" onclick="editObservation('${esc(o.id)}')">✎</button>
+          <button class="obsIcon" title="Elimina" aria-label="Elimina osservazione" onclick="deleteObservation('${esc(o.id)}')">×</button>
+        </div>
+      </div>
+      <div class="obsText" id="obsText_${esc(o.id)}">${esc(o.text)}</div>
+    </div>
+  `).join(''):'';
+}
+
+function editObservation(id){
+  const db=getDB();
+  const o=db.observations.find(x=>x.id===id);
+  if(!o)return;
+  const current=document.querySelector(`[data-obs="${id}"]`);
+  if(!current)return;
+  current.innerHTML=`
+    <div class="obsMeta">
+      <div class="obsLabel">MODIFICA OSSERVAZIONE · ${esc(fmtDateIT(o.date))}</div>
+    </div>
+    <textarea class="obsEdit" id="edit_${esc(id)}">${esc(o.text)}</textarea>
+    <div class="actions">
+      <button class="primary" onclick="saveObservationEdit('${esc(id)}')">SALVA</button>
+      <button class="secondary" onclick="renderCarryForward()">ANNULLA</button>
+    </div>`;
+}
+
+function saveObservationEdit(id){
+  const db=getDB();
+  const o=db.observations.find(x=>x.id===id);
+  const box=document.getElementById(`edit_${id}`);
+  if(!o||!box)return;
+  const txt=box.value.trim();
+  if(!txt){alert('L’osservazione non può essere vuota.');return}
+  o.text=txt;
+  setDB(db);
+  renderCarryForward();
+}
+
+function deleteObservation(id){
+  const db=getDB();
+  const o=db.observations.find(x=>x.id===id);
+  if(!o)return;
+  if(!confirm('Eliminare questa osservazione?'))return;
+  db.observations=db.observations.filter(x=>x.id!==id);
+  setDB(db);
+  renderCarryForward();
+}
+
+function renderActivePlaybook(s){
+  if(s.initialRegime==='CONSOLIDAMENTO'){
+    return `
+      <div class="livePlaybook">
+        <div class="prepStep">PLAYBOOK ATTIVO · CONSOLIDAMENTO</div>
+        <h3>LAVORA L'AREA, NON INSEGUIRE IL PREZZO</h3>
+        <div class="pillrow">
+          <span class="badge">AREA / VALUE AREA</span>
+          <span class="badge">ESTREMI</span>
+          <span class="badge">PICCOLI SCALP</span>
+          <span class="badge">LIMIT ORDER</span>
+          <span class="badge accent">SENZA STOP · DA VALIDARE</span>
+        </div>
+      </div>`;
+  }
+
+  if(s.initialRegime==='SPOSTAMENTO / TREND'){
+    return `
+      <div class="livePlaybook">
+        <div class="prepStep">PLAYBOOK ATTIVO · SPOSTAMENTO / TREND</div>
+        <h3>LAVORA LA STRUTTURA</h3>
+        <div class="comboPanel">
+          <div class="comboTitle">COMBO AD ALTA PRIORITÀ</div>
+          <div class="comboGrid">
+            <div class="comboItem"><b>VWAP</b><span>+</span><b>9EMA</b></div>
+            <div class="comboItem"><b>PINBAR</b><span>+</span><b>9EMA</b></div>
+            <div class="comboItem"><b>VWAP</b><span>+</span><b>PINBAR</b></div>
+          </div>
+        </div>
+        <div class="pillrow" style="margin-top:12px">
+          <span class="badge">STRUTTURA</span>
+          <span class="badge">RELAZIONE CON VWAP</span>
+          <span class="badge">STOP LOSS</span>
+          <span class="badge">WEAK CANDLE</span>
+          <span class="badge">PIVOT COINCIDENTI</span>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="livePlaybook">
+      <div class="prepStep">REGIME · NON CHIARO</div>
+      <h3>NON FORZARE IL PLAYBOOK</h3>
+      <p class="sub" style="margin:0">ATTENDI CHE IL MERCATO DIVENTI LEGGIBILE. SE CAMBIA LA LETTURA, TERMINA QUESTA SESSIONE E ATTIVANE UNA NUOVA.</p>
+    </div>`;
+}
+
+function renderTodayGuided(){
+  const wrap=document.getElementById('todayGuidedWrap');
+  const list=document.getElementById('todayGuidedList');
+  if(!wrap||!list)return;
+  const rows=getDB().guidedSessions
+    .filter(s=>s.date===today())
+    .sort((a,b)=>(b.startedAt||'').localeCompare(a.startedAt||''));
+
+  wrap.classList.toggle('hidden',!rows.length);
+  list.innerHTML=rows.map(s=>{
+    const end=s.endTime||'IN CORSO';
+    const closeEmotion=s.close?.emotion?` → ${s.close.emotion}`:'';
+    return `<div class="guidedRow">
+      <div>
+        <b>${esc(s.startTime||'—')}–${esc(end)} · ${esc(s.initialRegime||'—')}</b>
+        <div class="guidedMeta">${esc(s.checkin?.emotion||'—')}${esc(closeEmotion)}${s.news?.verified?' · NEWS ✓':''}</div>
+      </div>
+      <div class="muted">${s.close?.pnlValue!=null?money(s.close.pnlValue):''}</div>
+    </div>`;
+  }).join('');
+}
+
 function renderHome(){
-  const s=getActive(), no=document.getElementById('noSession'), ac=document.getElementById('activeSession');
-  if(!s){no.classList.remove('hidden');ac.classList.add('hidden');return}
-  no.classList.add('hidden');ac.classList.remove('hidden');
-  document.getElementById('activeTitle').textContent=`${s.market} · ${s.date}`;
-  document.getElementById('activeMeta').textContent=[s.props,`DLL ${money(s.dll)}`,s.maxGiveback?`giveback ${money(s.maxGiveback)}`:''].filter(Boolean).join(' · ');
-  const current=s.pnl.length?s.pnl[s.pnl.length-1].value:0;
-  const vals=[0,...s.pnl.map(x=>x.value)]; const peak=Math.max(...vals);
-  const floor=s.maxGiveback?peak-s.maxGiveback:null;
-  document.getElementById('currentPnl').textContent=money(current);
-  document.getElementById('floorText').textContent=floor===null?'No giveback rule':'theoretical peak floor '+money(floor);
-  const lastCx=s.contexts[s.contexts.length-1];
-  document.getElementById('mRegime').textContent=lastCx?(lastCx.regime.includes('Mean')?'MR':lastCx.regime.includes('Directional')?'DIR':lastCx.regime):'—';
-  document.getElementById('mTrades').textContent=s.blocks.reduce((a,b)=>a+n(b.trades),0);
-  document.getElementById('mPeak').textContent=money(peak);
-  document.getElementById('mGross').textContent=s.contexts.length;
-  const tl=allTimeline(s).slice(-10).reverse();
-  document.getElementById('todayTimeline').innerHTML=tl.length?tl.map(x=>{
-    if(x.type==='context')return `<div class="titem"><div class="time">${esc(x.time)} · ${esc(x.phase)}</div><div class="title">Context → ${esc(x.regime)}</div><div class="detail">${esc([x.expectation,x.atr?('ATR '+x.atr):'',x.vaWidth!=='N/A'?('VA '+x.vaWidth):'',x.note].filter(Boolean).join(' · '))}</div></div>`;
-    if(x.type==='block')return `<div class="titem"><div class="time">${esc(x.start)}${x.end?'–'+esc(x.end):''} · ${esc(x.phase)}</div><div class="title">Trading block · ${esc(x.role)} · ${money(x.pnl)}</div><div class="detail">${esc([x.regime,x.approach,x.execution,(x.trades||0)+' trades','sync '+x.sync+'/5',x.note].filter(Boolean).join(' · '))}</div></div>`;
-    if(x.type==='pnl')return `<div class="titem"><div class="time">${esc(x.time)} · ${esc(x.phase)}</div><div class="title">P&L checkpoint → ${money(x.value)}</div><div class="detail">${esc([x.reason,x.note].filter(Boolean).join(' · '))}</div></div>`;
-    if(x.type==='exposure')return `<div class="titem"><div class="time">${esc(x.time)}</div><div class="title">Exposure · gross ${x.gross} · net ${x.net>0?'+':''}${x.net}</div><div class="detail">${esc([x.opposed?'opposed exposures':'one-sided',x.rules,x.note].filter(Boolean).join(' · '))}</div></div>`;
-  }).join(''):'<div class="empty">No snapshots yet.</div>';
+  const s=getActiveGuided();
+  const no=document.getElementById('noSession');
+  const ac=document.getElementById('activeSession');
+
+  if(!s){
+    no.classList.remove('hidden');
+    ac.classList.add('hidden');
+    renderCarryForward();
+    renderTodayGuided();
+    return;
+  }
+
+  no.classList.add('hidden');
+  ac.classList.remove('hidden');
+
+  document.getElementById('activeTitle').textContent=`${s.startTime||'—'} · ${s.initialRegime||'—'}`;
+  document.getElementById('activeMeta').textContent=`PDH / PDL / SETTLEMENT ✓ · NEWS ${s.news?.verified?'✓':'—'}`;
+  document.getElementById('activeCheckin').textContent=s.checkin?.emotion||'—';
+  const pnl=s.checkin?.pnlValue;
+  document.getElementById('activeEmotion').textContent=
+    `${pnl!=null?'P&L '+money(pnl):'P&L NON INDICATO'}`;
+  document.getElementById('activePlaybook').innerHTML=renderActivePlaybook(s);
 }
 
 function flattenBlocks(){
@@ -711,7 +3047,7 @@ function agg(rows,keyFn){
 }
 function rowsHtml(m,kind){
   const entries=Object.entries(m);
-  if(!entries.length)return `<tr><td colspan="7" class="muted">No data yet.</td></tr>`;
+  if(!entries.length)return `<tr><td colspan="7" class="muted">NESSUN DATO ANCORA.</td></tr>`;
   return entries.map(([k,a])=>{
     const avg=a.blocks?a.pnl/a.blocks:0, sync=a.syncN?(a.sync/a.syncN).toFixed(1):'—';
     if(kind==='regime')return `<tr><td>${esc(k)}</td><td>${a.blocks}</td><td>${a.trades}</td><td>${money(a.pnl)}</td><td>${money(avg)}</td><td>${sync}</td></tr>`;
@@ -720,68 +3056,234 @@ function rowsHtml(m,kind){
     if(kind==='exec')return `<tr><td>${esc(k)}</td><td>${a.blocks}</td><td>${a.trades}</td><td>${money(a.pnl)}</td><td>${sync}</td></tr>`;
   }).join('');
 }
+function uniqueCapturedTrades(){
+  const db=getDB();
+  const captures=[...db.dataCaptures].sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
+  const map=new Map();
+  captures.forEach(c=>{
+    (c.importedTrades||[]).forEach(t=>{
+      const key=String(t.id||`${t.contractName}|${t.enteredAt}|${t.entryPrice}|${t.side}`);
+      map.set(key,{...t,captureId:c.id,captureDate:c.date});
+    });
+  });
+  return [...map.values()];
+}
+
+function tradeAgg(rows,keyFn){
+  const m={};
+  rows.forEach(t=>{
+    const k=keyFn(t)||'NON CLASSIFICATO';
+    if(!m[k])m[k]={count:0,pnl:0,wins:0,atrSum:0,atrN:0,durSum:0,durN:0};
+    const a=m[k];
+    a.count++;
+    a.pnl+=n(t.pnl);
+    if(n(t.pnl)>0)a.wins++;
+    if(t.atr!=null && t.atr!==''){a.atrSum+=n(t.atr);a.atrN++}
+    const dur=tradeDurationSeconds(t);
+    if(dur!=null){a.durSum+=dur;a.durN++}
+  });
+  return m;
+}
+
+function statsRows(m){
+  const entries=Object.entries(m);
+  if(!entries.length)return `<tr><td colspan="7" class="muted">NESSUN DATO ANCORA.</td></tr>`;
+  return entries.map(([k,a])=>{
+    const avg=a.count?a.pnl/a.count:0;
+    const wr=a.count?(a.wins/a.count*100):0;
+    const atr=a.atrN?(a.atrSum/a.atrN).toFixed(2):'—';
+    const dur=a.durN?formatDuration(a.durSum/a.durN):'—';
+    return `<tr>
+      <td>${esc(k)}</td>
+      <td>${a.count}</td>
+      <td>${money(a.pnl)}</td>
+      <td>${money(avg)}</td>
+      <td>${wr.toFixed(1)}%</td>
+      <td>${atr}</td>
+      <td>${dur}</td>
+    </tr>`;
+  }).join('');
+}
+
+function durationStatsRows(trades){
+  const buckets=['0–15S','16–30S','31–60S','1–2M','2–5M','> 5M','NON DISPONIBILE'];
+  const m=tradeAgg(trades,t=>durationBucket(tradeDurationSeconds(t)));
+  const rows=buckets.filter(k=>m[k]).map(k=>{
+    const a=m[k];
+    const avg=a.count?a.pnl/a.count:0;
+    const wr=a.count?(a.wins/a.count*100):0;
+    const atr=a.atrN?(a.atrSum/a.atrN).toFixed(2):'—';
+    return `<tr>
+      <td>${esc(k)}</td>
+      <td>${a.count}</td>
+      <td>${money(a.pnl)}</td>
+      <td>${money(avg)}</td>
+      <td>${wr.toFixed(1)}%</td>
+      <td>${atr}</td>
+    </tr>`;
+  }).join('');
+  return rows||'<tr><td colspan="6" class="muted">NESSUN DATO DURATA ANCORA.</td></tr>';
+}
+
 function renderAnalytics(){
-  const db=getDB(), blocks=flattenBlocks(), closed=db.sessions.filter(s=>s.status==='closed');
-  document.getElementById('aSessions').textContent=db.sessions.length;
-  document.getElementById('aBlocks').textContent=blocks.length;
-  document.getElementById('aTrades').textContent=blocks.reduce((a,b)=>a+n(b.trades),0);
-  document.getElementById('aPnl').textContent=money(closed.reduce((a,s)=>a+n(s.review?.finalPnl),0));
-  document.getElementById('regimeTable').innerHTML=rowsHtml(agg(blocks,b=>b.regime),'regime');
-  document.getElementById('phaseTable').innerHTML=rowsHtml(agg(blocks,b=>b.phase),'phase');
-  document.getElementById('roleTable').innerHTML=rowsHtml(agg(blocks,b=>b.role),'role');
-  document.getElementById('execTable').innerHTML=rowsHtml(agg(blocks,b=>b.execution),'exec');
+  const db=getDB();
+  const captures=db.dataCaptures||[];
+  const trades=uniqueCapturedTrades();
 
-  const outside=blocks.filter(b=>b.phase==='Asia'||b.phase==='Europe');
-  const rth=blocks.filter(b=>b.phase==='NY RTH'||b.phase==='Late RTH / MOC');
-  const stat=(arr,approach)=>{const x=arr.filter(b=>b.approach===approach);return {n:x.length,p:x.reduce((a,b)=>a+n(b.pnl),0),t:x.reduce((a,b)=>a+n(b.trades),0)}};
-  const om=stat(outside,'Mean Reversion'), od=stat(outside,'Directional'), rm=stat(rth,'Mean Reversion'), rd=stat(rth,'Directional');
-  document.getElementById('hypothesisBox').innerHTML=`
-    <div class="grid2">
-      <div class="metric"><div class="l">Outside RTH · Mean Reversion</div><div class="v">${om.n} blocks</div><div class="hint">${om.t} trades · ${money(om.p)}</div></div>
-      <div class="metric"><div class="l">Outside RTH · Directional</div><div class="v">${od.n} blocks</div><div class="hint">${od.t} trades · ${money(od.p)}</div></div>
-      <div class="metric"><div class="l">RTH/MOC · Mean Reversion</div><div class="v">${rm.n} blocks</div><div class="hint">${rm.t} trades · ${money(rm.p)}</div></div>
-      <div class="metric"><div class="l">RTH/MOC · Directional</div><div class="v">${rd.n} blocks</div><div class="hint">${rd.t} trades · ${money(rd.p)}</div></div>
-    </div>`;
+  document.getElementById('aSessions').textContent=captures.length;
+  document.getElementById('aTrades').textContent=trades.length;
+  document.getElementById('aPnl').textContent=money(trades.reduce((a,t)=>a+n(t.pnl),0));
+  document.getElementById('aFees').textContent=money(trades.reduce((a,t)=>a+n(t.fees),0));
 
-  const flags={};blocks.forEach(b=>(b.behavior||[]).forEach(f=>{if(!flags[f])flags[f]={n:0,p:0};flags[f].n++;flags[f].p+=n(b.pnl)}));
-  document.getElementById('behaviorBox').innerHTML=Object.keys(flags).length?Object.entries(flags).map(([k,v])=>`<span class="badge">${esc(k)} · ${v.n} blocks · ${money(v.p)}</span>`).join(''):'<span class="muted">No behavior flags yet.</span>';
+  document.getElementById('sessionStatsTable').innerHTML=statsRows(tradeAgg(trades,t=>t.session));
+  document.getElementById('contextStatsTable').innerHTML=statsRows(tradeAgg(trades,t=>t.context));
 
-  document.getElementById('sessionList').innerHTML=db.sessions.length?db.sessions.map(s=>{
-    const trades=s.blocks.reduce((a,b)=>a+n(b.trades),0), pnl=s.status==='closed'?n(s.review?.finalPnl):(s.pnl.length?s.pnl[s.pnl.length-1].value:0);
-    const peak=Math.max(0,...s.pnl.map(x=>x.value));
-    return `<div class="sessionItem"><div class="sessionHead"><div><b>${esc(s.date)} · ${esc(s.market)}</b><div class="muted">${esc(s.status)} · ${trades} trades · ${s.blocks.length} blocks · ${s.contexts.length} context snapshots</div></div><div><b>${money(pnl)}</b><div class="muted">peak ${money(peak)}</div></div></div>${s.review?.insight?`<div class="hint" style="margin-top:7px">${esc(s.review.insight)}</div>`:''}</div>`
-  }).join(''):'<div class="empty">No sessions yet.</div>';
+  const checkinCounts={};
+  const checkoutCounts={};
+  const transitionCounts={};
+
+  (db.guidedSessions||[]).forEach(s=>{
+    const cin=s.checkin?.emotion;
+    const cout=s.close?.emotion;
+
+    if(cin)checkinCounts[cin]=(checkinCounts[cin]||0)+1;
+    if(cout)checkoutCounts[cout]=(checkoutCounts[cout]||0)+1;
+
+    if(cin&&cout){
+      const key=`${cin} → ${cout}`;
+      transitionCounts[key]=(transitionCounts[key]||0)+1;
+    }
+  });
+
+  document.getElementById('emotionCheckinStats').innerHTML=Object.keys(checkinCounts).length
+    ?Object.entries(checkinCounts).map(([k,v])=>`<span class="badge">${esc(k)} · ${v}</span>`).join('')
+    :'<span class="muted">NESSUN CHECK-IN ANCORA.</span>';
+
+  document.getElementById('emotionCheckoutStats').innerHTML=Object.keys(checkoutCounts).length
+    ?Object.entries(checkoutCounts).map(([k,v])=>`<span class="badge">${esc(k)} · ${v}</span>`).join('')
+    :'<span class="muted">NESSUN CHECK-OUT ANCORA.</span>';
+
+  document.getElementById('emotionTransitions').innerHTML=Object.keys(transitionCounts).length
+    ?Object.entries(transitionCounts)
+      .sort((a,b)=>b[1]-a[1])
+      .map(([k,v])=>`<span class="badge">${esc(k)} · ${v}</span>`).join('')
+    :'<span class="muted">NESSUNA TRANSIZIONE EMOTIVA ANCORA.</span>';
+
+  const durations=trades.map(tradeDurationSeconds).filter(v=>v!=null && Number.isFinite(v));
+  const winDur=trades.filter(t=>n(t.pnl)>0).map(tradeDurationSeconds).filter(v=>v!=null && Number.isFinite(v));
+  const lossDur=trades.filter(t=>n(t.pnl)<0).map(tradeDurationSeconds).filter(v=>v!=null && Number.isFinite(v));
+
+  const avgDur=durations.length?durations.reduce((a,b)=>a+b,0)/durations.length:null;
+  const avgWin=winDur.length?winDur.reduce((a,b)=>a+b,0)/winDur.length:null;
+  const avgLoss=lossDur.length?lossDur.reduce((a,b)=>a+b,0)/lossDur.length:null;
+
+  document.getElementById('dAvg').textContent=formatDuration(avgDur);
+  document.getElementById('dMedian').textContent=formatDuration(median(durations));
+  document.getElementById('dWin').textContent=formatDuration(avgWin);
+  document.getElementById('dLoss').textContent=formatDuration(avgLoss);
+  document.getElementById('durationStatsTable').innerHTML=durationStatsRows(trades);
+
+  document.getElementById('captureList').innerHTML=captures.length
+    ?captures.map(c=>{
+      const tradeCount=(c.importedTrades||[]).length;
+      const pnl=(c.importedTrades||[]).reduce((a,t)=>a+n(t.pnl),0);
+      const contracts=[...new Set((c.importedTrades||[]).map(t=>t.contractName).filter(Boolean))].join(' / ');
+      return `<div class="sessionItem">
+        <div class="sessionHead">
+          <div>
+            <b>${esc(c.date||'—')} · ${esc(contracts||'SOLO SCREENSHOT')}</b>
+            <div class="muted">${tradeCount} TRADE · ${c.screenshot?.present?'SCREENSHOT ✓':'NESSUNO SCREENSHOT'}${c.guidedSessionId?' · SESSIONE LIVE COLLEGATA ✓':''}</div>
+          </div>
+          <div>
+            <b>${money(pnl)}</b>
+            <div class="muted">${esc((c.createdAt||'').slice(11,16))}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')
+    :'<div class="empty">NESSUN DATA CAPTURE ANCORA.</div>';
 }
 
 function exportJSON(){
-  const data={version:'0.2',exportedAt:new Date().toISOString(),...getDB()};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='trading_ecosystem_lab_backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+  exportCompleteLab();
 }
 function csvCell(x){const s=Array.isArray(x)?x.join('|'):String(x??'');return '"'+s.replaceAll('"','""')+'"'}
 function exportBlocksCSV(){
-  const rows=flattenBlocks(), cols=['date','market','phase','regime','role','approach','execution','refs','trades','maxContracts','targetTicks','pnl','stopModel','stopTicks','rFactor','biggestWin','biggestLoss','atr','sync','behavior','note'];
-  const csv=[cols.join(','),...rows.map(r=>cols.map(c=>csvCell(r[c])).join(','))].join('\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='trading_ecosystem_blocks.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+  const rows=uniqueCapturedTrades();
+  const cols=['id','contractName','enteredAt','exitedAt','entryPrice','exitPrice','fees','pnl','size','side','tradeDay','tradeDuration','durationSeconds','commissions','session','atr','context'];
+  const csv=[cols.join(','),...rows.map(r=>cols.map(c=>csvCell(r[c])).join(','))].join('\\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='trading_ecosystem_trades.csv';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
-function importJSON(e){
-  const f=e.target.files[0]; if(!f)return;
-  const reader=new FileReader();reader.onload=()=>{
+async function importJSON(e){
+  const f=e.target.files[0];
+  if(!f)return;
+
+  const reader=new FileReader();
+  reader.onload=async()=>{
     try{
-      const j=JSON.parse(reader.result), sessions=j.sessions;
-      if(!Array.isArray(sessions))throw new Error('Invalid file');
-      if(!confirm(`Import ${sessions.length} sessions and replace current local data?`))return;
-      setDB({sessions});setActiveId('');showView('data');
-    }catch(err){alert('Import failed: '+err.message)}
-  };reader.readAsText(f);e.target.value='';
+      const j=JSON.parse(reader.result);
+
+      let payload;
+      let screenshots=[];
+
+      if(j && j.format==='TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT'){
+        payload=j.data||{};
+        screenshots=Array.isArray(j.screenshots)?j.screenshots:[];
+      }else{
+        // Compatibility with older exports.
+        payload=j||{};
+      }
+
+      const sessions=Array.isArray(payload.sessions)?payload.sessions:[];
+      const observations=Array.isArray(payload.observations)?payload.observations:[];
+      const guidedSessions=Array.isArray(payload.guidedSessions)?payload.guidedSessions:[];
+      const dataCaptures=Array.isArray(payload.dataCaptures)?payload.dataCaptures:[];
+      const seededObservationKeys=Array.isArray(payload.seededObservationKeys)?payload.seededObservationKeys:[];
+
+      const totalItems=sessions.length+guidedSessions.length+dataCaptures.length;
+      if(!confirm(`IMPORTARE IL LAB E SOSTITUIRE I DATI LOCALI?\n\n${guidedSessions.length} SESSIONI LIVE · ${dataCaptures.length} DATA CAPTURE · ${screenshots.length} SCREENSHOT`))return;
+
+      setDB({
+        ...payload,
+        sessions,
+        observations,
+        guidedSessions,
+        dataCaptures,
+        seededObservationKeys
+      });
+
+      if(j && j.format==='TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT'){
+        await restoreScreenshots(screenshots);
+      }
+
+      setActiveId('');
+      setActiveGuidedId('');
+      pendingCaptureGuidedSessionId='';
+      showView('data');
+      alert(`IMPORT COMPLETATO: ${totalItems} ELEMENTI · ${screenshots.length} SCREENSHOT.`);
+    }catch(err){
+      alert('IMPORTAZIONE FALLITA: '+(err?.message||err));
+    }finally{
+      e.target.value='';
+    }
+  };
+  reader.readAsText(f);
 }
-function resetAll(){
-  if(confirm('This deletes all Trading Ecosystem Lab data stored in this browser. Continue?')){
-    localStorage.removeItem(KEY);localStorage.removeItem(ACTIVE_KEY);showView('home');
+async function resetAll(){
+  if(confirm('QUESTO ELIMINA TUTTI I DATI DEL TRADING ECOSYSTEM LAB SALVATI IN QUESTO BROWSER, INCLUSI GLI SCREENSHOT. CONTINUARE?')){
+    localStorage.removeItem(KEY);
+    localStorage.removeItem(ACTIVE_KEY);
+    localStorage.removeItem(ACTIVE_GUIDED_KEY);
+    try{await clearStoredScreenshots()}catch(e){}
+    showView('home');
   }
 }
 
-document.getElementById('st_date').value=today();
 showView('home');
 </script>
 </body>
