@@ -623,7 +623,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
 .liveSessionCard{border-color:#39424d}
 .emotionButtons{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:7px;
   margin-top:7px;
 }
@@ -789,6 +789,57 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   font-size:10px;
   line-height:1.55;
 }
+
+.focusCard{
+  border-color:#3b424b;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.018),transparent 55%),
+    #0b0e12;
+}
+.focusQuestion{
+  padding:14px 0;
+  border-top:1px solid #272e36;
+}
+.focusQuestion:first-of-type{
+  margin-top:10px;
+}
+.focusQuestionText{
+  font-size:12px;
+  line-height:1.5;
+  font-weight:850;
+  color:#f0f3f6;
+  letter-spacing:.025em;
+}
+.focusAnswers{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.focusAnswer{
+  border:1px solid #353e48;
+  background:#0b0f13;
+  color:#aeb7c1;
+  min-height:44px;
+  padding:9px 10px;
+  border-radius:9px;
+  font-size:10px;
+  font-weight:850;
+  cursor:pointer;
+}
+.focusAnswer:hover{border-color:#58636f;color:#fff}
+.focusAnswer.selected{
+  border-color:#73a7ff;
+  background:rgba(70,127,210,.13);
+  color:#fff;
+  box-shadow:0 0 0 1px rgba(115,167,255,.42) inset;
+}
+@media(max-width:760px){
+  .focusAnswers{grid-template-columns:1fr}
+  .emotionButtons{grid-template-columns:1fr}
+  .emotionButtons .emotionBtn:last-child{grid-column:auto}
+}
+
 @media(max-width:760px){
   .analysisFlowPro{grid-template-columns:1fr}
   .flowChevron{transform:rotate(90deg);text-align:center;line-height:20px}
@@ -829,7 +880,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.16 — complete cumulative export</div>
+      <div class="ver">v0.17 — focus check + 3 emotional states</div>
     </div>
     <div class="nav">
       <button id="navHome" onclick="showView('home')">OGGI</button>
@@ -1129,19 +1180,46 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
           <input id="guide_pnl" type="number" step="0.01" placeholder="ES. 250 O -180">
         </div>
 
-        <label>COME TI SENTI?</label>
+        <label>COME TI SENTI, PRIMA DI CENTRARTI?</label>
         <div class="emotionButtons" id="emotionButtons">
-          <button class="emotionBtn" data-emotion="CALMO" onclick="selectEmotion('CALMO')">CALMO</button>
-          <button class="emotionBtn" data-emotion="FOCALIZZATO" onclick="selectEmotion('FOCALIZZATO')">FOCALIZZATO</button>
-          <button class="emotionBtn" data-emotion="TESO" onclick="selectEmotion('TESO')">TESO</button>
+          <button class="emotionBtn" data-emotion="CENTRATO" onclick="selectEmotion('CENTRATO')">CENTRATO</button>
+          <button class="emotionBtn" data-emotion="SOTTO PRESSIONE" onclick="selectEmotion('SOTTO PRESSIONE')">SOTTO PRESSIONE</button>
           <button class="emotionBtn" data-emotion="EUFORICO" onclick="selectEmotion('EUFORICO')">EUFORICO</button>
-          <button class="emotionBtn" data-emotion="FRUSTRATO" onclick="selectEmotion('FRUSTRATO')">FRUSTRATO</button>
         </div>
       </div>
 
+      <div class="card prepCard focusCard">
+        <div class="prepStep">01 · FOCUS / CENTERING CHECK</div>
+        <h3>PRIMA DI OPERARE, RIMETTI IL PROCESSO AL CENTRO</h3>
+        <p class="hint">NON È UN TEST EMOTIVO. SERVE A RENDERE ESPLICITO COSA VUOI CONTROLLARE NEI PROSSIMI TRADE.</p>
+
+        <div class="focusQuestion" data-focus-question="loss_without_error">
+          <div class="focusQuestionText">UN TRADE COERENTE CON IL PROCESSO CHIUDE IN PERDITA. COSA DETERMINA SE È STATO UN BUON TRADE?</div>
+          <div class="focusAnswers">
+            <button class="focusAnswer" data-answer="QUALITÀ DELL'ESECUZIONE" onclick="selectFocusAnswer(this)">QUALITÀ DELL'ESECUZIONE</button>
+            <button class="focusAnswer" data-answer="ESITO ECONOMICO" onclick="selectFocusAnswer(this)">ESITO ECONOMICO</button>
+          </div>
+        </div>
+
+        <div class="focusQuestion" data-focus-question="unprotected_risk">
+          <div class="focusQuestionText">SE UNA POSIZIONE SENZA STOP INIZIA A MINACCIARE L'INTERA GIORNATA, COSA VIENE PRIMA?</div>
+          <div class="focusAnswers">
+            <button class="focusAnswer" data-answer="PROTEGGERE LA GIORNATA" onclick="selectFocusAnswer(this)">PROTEGGERE LA GIORNATA</button>
+            <button class="focusAnswer" data-answer="DIFENDERE L'IDEA" onclick="selectFocusAnswer(this)">DIFENDERE L'IDEA</button>
+          </div>
+        </div>
+
+        <div class="focusQuestion" data-focus-question="process_vs_outcome">
+          <div class="focusQuestionText">NEI PROSSIMI TRADE, COSA È PIÙ IMPORTANTE VALUTARE?</div>
+          <div class="focusAnswers">
+            <button class="focusAnswer" data-answer="PROCESSO" onclick="selectFocusAnswer(this)">PROCESSO</button>
+            <button class="focusAnswer" data-answer="ESITO" onclick="selectFocusAnswer(this)">ESITO</button>
+          </div>
+        </div>
+      </div>
 
       <div class="card prepCard">
-        <div class="prepStep">01 · LIVELLI</div>
+        <div class="prepStep">02 · LIVELLI</div>
         <h3>TRACCIA I RIFERIMENTI</h3>
         <p class="hint">PER ORA I RIFERIMENTI SONO SOLO QUESTI.</p>
 
@@ -1163,7 +1241,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
       </div>
 
       <div class="card prepCard">
-        <div class="prepStep">02 · REGIME</div>
+        <div class="prepStep">03 · REGIME</div>
         <h3>IDENTIFICA LO STATO ATTUALE DEL MERCATO</h3>
 
         <div class="analysisFlowPro">
@@ -1407,11 +1485,9 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
 
         <label>STATO EMOTIVO AL CHECK-OUT</label>
         <div class="emotionButtons" id="closeEmotionButtons">
-          <button class="emotionBtn" data-emotion="CALMO" onclick="selectCloseEmotion('CALMO')">CALMO</button>
-          <button class="emotionBtn" data-emotion="FOCALIZZATO" onclick="selectCloseEmotion('FOCALIZZATO')">FOCALIZZATO</button>
-          <button class="emotionBtn" data-emotion="TESO" onclick="selectCloseEmotion('TESO')">TESO</button>
+          <button class="emotionBtn" data-emotion="CENTRATO" onclick="selectCloseEmotion('CENTRATO')">CENTRATO</button>
+          <button class="emotionBtn" data-emotion="SOTTO PRESSIONE" onclick="selectCloseEmotion('SOTTO PRESSIONE')">SOTTO PRESSIONE</button>
           <button class="emotionBtn" data-emotion="EUFORICO" onclick="selectCloseEmotion('EUFORICO')">EUFORICO</button>
-          <button class="emotionBtn" data-emotion="FRUSTRATO" onclick="selectCloseEmotion('FRUSTRATO')">FRUSTRATO</button>
         </div>
 
         <label>È EMERSA UNA NUOVA OSSERVAZIONE / INTUIZIONE?</label>
@@ -1444,6 +1520,7 @@ let pendingSessionScreenshot=null;
 let pendingScreenshotObjectUrl='';
 let pendingPreparation={
   checkin:{pnlValue:null,emotion:''},
+  focus:{},
   levels:{pdh:false,pdl:false,settlement:false,news:false},
   regime:'',
   checks:{}
@@ -1900,6 +1977,7 @@ function resetScreenshotForm(){
 function resetPreparation(){
   pendingPreparation={
     checkin:{pnlValue:null,emotion:''},
+    focus:{},
     levels:{pdh:false,pdl:false,settlement:false,news:false},
     regime:'',
     checks:{}
@@ -1908,6 +1986,7 @@ function resetPreparation(){
   document.querySelectorAll('#form_prepare .prepCheck').forEach(b=>b.classList.remove('checked'));
   document.querySelectorAll('#form_prepare .regimeBtn').forEach(b=>b.classList.remove('selected'));
   document.querySelectorAll('#form_prepare .emotionBtn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('#form_prepare .focusAnswer').forEach(b=>b.classList.remove('selected'));
 
   const pnl=document.getElementById('guide_pnl');
   if(pnl)pnl.value='';
@@ -1939,6 +2018,21 @@ function selectEmotion(emotion){
   updatePreparationStatus();
 }
 
+function selectFocusAnswer(btn){
+  const q=btn.closest('.focusQuestion');
+  if(!q)return;
+  const key=q.dataset.focusQuestion;
+  q.querySelectorAll('.focusAnswer').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  pendingPreparation.focus[key]=btn.dataset.answer||'';
+  updatePreparationStatus();
+}
+
+function focusCheckComplete(){
+  const required=['loss_without_error','unprotected_risk','process_vs_outcome'];
+  return required.every(k=>!!pendingPreparation.focus[k]);
+}
+
 function togglePrepCheck(btn){
   btn.classList.toggle('checked');
   const key=btn.dataset.key;
@@ -1966,6 +2060,7 @@ function preparationReady(){
   const c=pendingPreparation.checkin;
   return !!(
     c.emotion &&
+    focusCheckComplete() &&
     l.pdh && l.pdl && l.settlement && l.news &&
     pendingPreparation.regime
   );
@@ -1984,6 +2079,8 @@ function updatePreparationStatus(){
 
   if(!pendingPreparation.checkin.emotion){
     status.textContent='FAI IL CHECK-IN EMOTIVO.';
+  }else if(!focusCheckComplete()){
+    status.textContent='COMPLETA IL FOCUS / CENTERING CHECK.';
   }else if(!pendingPreparation.levels.pdh || !pendingPreparation.levels.pdl || !pendingPreparation.levels.settlement){
     status.textContent='TRACCIA E CONFERMA PDH, PDL E SETTLEMENT.';
   }else if(!pendingPreparation.levels.news){
@@ -2012,7 +2109,13 @@ async function finalizeSessionFromPreparation(){
     dll:1000,
     checkin:{
       pnlValue:pendingPreparation.checkin.pnlValue,
-      emotion:pendingPreparation.checkin.emotion
+      emotion:pendingPreparation.checkin.emotion,
+      emotionMethod:'SELF_DETERMINED'
+    },
+    focusCheck:{
+      completedAt:new Date().toISOString(),
+      answers:{...pendingPreparation.focus},
+      purpose:'PROCESS_AND_CENTERING_NOT_EMOTIONAL_CLASSIFICATION'
     },
     levels:{pdh:pendingPreparation.levels.pdh,pdl:pendingPreparation.levels.pdl,settlement:pendingPreparation.levels.settlement},
     news:{verified:pendingPreparation.levels.news},
@@ -2195,6 +2298,18 @@ function buildFrameworkSnapshot(){
     purpose:'TRADING ECOSYSTEM LAB',
     references:['PREVIOUS DAY HIGH','PREVIOUS DAY LOW','SETTLEMENT'],
     preSession:{
+      emotionalCheck:{
+        method:'SELF_DETERMINED',
+        states:['CENTRATO','SOTTO PRESSIONE','EUFORICO']
+      },
+      focusCenteringCheck:{
+        purpose:'ACTIVATE PROCESS FOCUS; NOT USED TO INFER EMOTIONAL STATE',
+        questions:[
+          'UN TRADE COERENTE CON IL PROCESSO CHIUDE IN PERDITA. COSA DETERMINA SE È STATO UN BUON TRADE?',
+          "SE UNA POSIZIONE SENZA STOP INIZIA A MINACCIARE L'INTERA GIORNATA, COSA VIENE PRIMA?",
+          'NEI PROSSIMI TRADE, COSA È PIÙ IMPORTANTE VALUTARE?'
+        ]
+      },
       newsReleaseVerification:true,
       workflow:[
         {tool:'P&F',purpose:'REGIME'},
@@ -2292,11 +2407,13 @@ async function buildCompleteExportPackage(){
   return {
     format:'TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT',
     schemaVersion:1,
-    appVersion:'0.16',
+    appVersion:'0.17',
     exportedAt:new Date().toISOString(),
     instructionsForAnalysis:[
       'Treat data as cumulative historical state.',
       'Use guidedSessions for live-session check-in/check-out and emotional state.',
+      'Emotional state is self-determined from three states: CENTRATO, SOTTO PRESSIONE, EUFORICO.',
+      'focusCheck answers are process/centering prompts and must not be interpreted as an inferred emotional-state score.',
       'Use dataCaptures for captured executions and screenshots.',
       'Use guidedSessionId on a data capture to link trades to a specific live session.',
       'Screenshots are embedded as data URLs and keyed by sessionId/capture id.',
@@ -2822,6 +2939,7 @@ function persistGuidedClose(s,pnlValue,insight){
   s.close={
     pnlValue,
     emotion:pendingCloseEmotion,
+    emotionMethod:'SELF_DETERMINED',
     insight
   };
 
