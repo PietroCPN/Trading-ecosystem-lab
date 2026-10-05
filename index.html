@@ -880,7 +880,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.17 — focus check + 3 emotional states</div>
+      <div class="ver">v0.18 — focus check + 3 emotional states</div>
     </div>
     <div class="nav">
       <button id="navHome" onclick="showView('home')">OGGI</button>
@@ -1186,6 +1186,9 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
           <button class="emotionBtn" data-emotion="SOTTO PRESSIONE" onclick="selectEmotion('SOTTO PRESSIONE')">SOTTO PRESSIONE</button>
           <button class="emotionBtn" data-emotion="EUFORICO" onclick="selectEmotion('EUFORICO')">EUFORICO</button>
         </div>
+
+        <label>COMMENTO LIBERO SUL CHECK-IN · FACOLTATIVO</label>
+        <textarea id="guide_emotion_comment" placeholder="ES. HO DORMITO POCO, MI SENTO MOLTO LUCIDO, STO PENSANDO ANCORA ALLA SESSIONE PRECEDENTE..."></textarea>
       </div>
 
       <div class="card prepCard focusCard">
@@ -1489,6 +1492,9 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
           <button class="emotionBtn" data-emotion="SOTTO PRESSIONE" onclick="selectCloseEmotion('SOTTO PRESSIONE')">SOTTO PRESSIONE</button>
           <button class="emotionBtn" data-emotion="EUFORICO" onclick="selectCloseEmotion('EUFORICO')">EUFORICO</button>
         </div>
+
+        <label>COMMENTO LIBERO SUL CHECK-OUT · FACOLTATIVO</label>
+        <textarea id="cl_emotion_comment" placeholder="ES. MI SENTO ANCORA IN MODALITÀ RECUPERO, HO PERSO LUCIDITÀ, SONO RIMASTO DISCIPLINATO..."></textarea>
 
         <label>È EMERSA UNA NUOVA OSSERVAZIONE / INTUIZIONE?</label>
         <textarea id="cl_insight" placeholder="FACOLTATIVO. SE LA SCRIVI, COMPARIRÀ NELLE WORKING OBSERVATIONS."></textarea>
@@ -1989,7 +1995,9 @@ function resetPreparation(){
   document.querySelectorAll('#form_prepare .focusAnswer').forEach(b=>b.classList.remove('selected'));
 
   const pnl=document.getElementById('guide_pnl');
+  const emotionComment=document.getElementById('guide_emotion_comment');
   if(pnl)pnl.value='';
+  if(emotionComment)emotionComment.value='';
 
   ['prepConsolidation','prepTrend','prepUnclear'].forEach(id=>{
     const el=document.getElementById(id);
@@ -2110,6 +2118,7 @@ async function finalizeSessionFromPreparation(){
     checkin:{
       pnlValue:pendingPreparation.checkin.pnlValue,
       emotion:pendingPreparation.checkin.emotion,
+      emotionComment:document.getElementById('guide_emotion_comment')?.value.trim()||'',
       emotionMethod:'SELF_DETERMINED'
     },
     focusCheck:{
@@ -2407,12 +2416,13 @@ async function buildCompleteExportPackage(){
   return {
     format:'TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT',
     schemaVersion:1,
-    appVersion:'0.17',
+    appVersion:'0.18',
     exportedAt:new Date().toISOString(),
     instructionsForAnalysis:[
       'Treat data as cumulative historical state.',
       'Use guidedSessions for live-session check-in/check-out and emotional state.',
       'Emotional state is self-determined from three states: CENTRATO, SOTTO PRESSIONE, EUFORICO.',
+      'Free-text emotional comments are stored next to the selected state in guidedSessions[].checkin.emotionComment and guidedSessions[].close.emotionComment; use them as qualitative context, not as a replacement for the selected state.',
       'focusCheck answers are process/centering prompts and must not be interpreted as an inferred emotional-state score.',
       'Use dataCaptures for captured executions and screenshots.',
       'Use guidedSessionId on a data capture to link trades to a specific live session.',
@@ -2918,6 +2928,7 @@ function openGuidedClose(){
   const m=mins%60;
   document.getElementById('cl_duration').value=h?`${h}H ${m}M`:`${m} MIN`;
   document.getElementById('cl_pnl').value='';
+  document.getElementById('cl_emotion_comment').value='';
   document.getElementById('cl_insight').value='';
 
   hideAll();
@@ -2932,13 +2943,14 @@ function selectCloseEmotion(emotion){
   });
 }
 
-function persistGuidedClose(s,pnlValue,insight){
+function persistGuidedClose(s,pnlValue,emotionComment,insight){
   s.status='closed';
   s.endedAt=new Date().toISOString();
   s.endTime=nowTime();
   s.close={
     pnlValue,
     emotion:pendingCloseEmotion,
+    emotionComment:emotionComment||'',
     emotionMethod:'SELF_DETERMINED',
     insight
   };
@@ -2977,8 +2989,9 @@ function completeGuidedSession(loadCsv){
     return;
   }
 
+  const emotionComment=document.getElementById('cl_emotion_comment').value.trim();
   const insight=document.getElementById('cl_insight').value.trim();
-  persistGuidedClose(s,n(pnlRaw),insight);
+  persistGuidedClose(s,n(pnlRaw),emotionComment,insight);
 
   if(loadCsv){
     openDataCapture(s.id);
