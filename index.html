@@ -834,6 +834,62 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   color:#fff;
   box-shadow:0 0 0 1px rgba(115,167,255,.42) inset;
 }
+
+.manualTradePanel{
+  margin-top:12px;
+  border:1px solid #4d412c;
+  background:linear-gradient(180deg,rgba(152,109,39,.10),rgba(10,13,17,.97));
+  border-radius:12px;
+  padding:13px;
+}
+.manualTradeHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:10px;
+}
+.manualTradeHead b{
+  color:#e4b85f;
+  font-size:11px;
+  letter-spacing:.08em;
+}
+.manualTradeHead .hint{margin-top:4px}
+.manualTradeList{display:grid;gap:7px}
+.manualTradeRow{
+  display:grid;
+  grid-template-columns:minmax(150px,1.2fr) minmax(90px,.75fr) minmax(90px,.75fr) minmax(80px,.65fr) auto;
+  gap:9px;
+  align-items:center;
+  border-top:1px solid #342f26;
+  padding-top:8px;
+}
+.manualTradeRow:first-child{border-top:0;padding-top:0}
+.manualTradeCell{
+  color:#aeb7c0;
+  font-size:10px;
+  line-height:1.35;
+}
+.manualTradeCell strong{
+  display:block;
+  color:#f0f2f4;
+  font-size:10px;
+}
+.manualLinkedBadge{
+  display:inline-block;
+  border:1px solid #775d35;
+  border-radius:999px;
+  padding:3px 7px;
+  color:#e8be70;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+@media(max-width:760px){
+  .manualTradeRow{grid-template-columns:1fr 1fr}
+  .manualTradeRow button{grid-column:1 / -1}
+}
+
 @media(max-width:760px){
   .focusAnswers{grid-template-columns:1fr}
   .emotionButtons{grid-template-columns:1fr}
@@ -880,7 +936,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.18 — focus check + 3 emotional states</div>
+      <div class="ver">v0.20 — focus check + 3 emotional states</div>
     </div>
     <div class="nav">
       <button id="navHome" onclick="showView('home')">OGGI</button>
@@ -1132,6 +1188,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
         </div>
 
         <div id="tradeTableContainer" class="tradeTableWrap hidden"></div>
+        <div id="excludedTradesContainer" class="manualTradePanel hidden"></div>
 
         <div class="screenshotPanel" id="screenshotPanel" tabindex="0" onpaste="handleScreenshotPaste(event)">
           <div class="screenshotHead">
@@ -1158,6 +1215,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
 
           <div class="chartLegend">
             LEGENDA ATTESA DEL GRAFICO: VWAP ASIA NERA · VWAP LONDON ROSSA · VWAP NY BLU · RELATIVE DEVIAZIONI STANDARD · PREVIOUS DAY HIGH · PREVIOUS DAY LOW · SETTLEMENT
+            <br>NOTA LETTURA SCREENSHOT: I PICCOLI TRIANGOLI SOPRA / SOTTO LE CANDELE SONO MARKER DEL FRACTAL, NON ESECUZIONI.
           </div>
         </div>
 
@@ -1568,6 +1626,11 @@ function getDB(){
       seedKey:'ny-open-gap-vs-prior-day',
       date:'2026-10-02',
       text:'Attenzione se all’apertura di NY sono in GAP rispetto a ieri.'
+    },
+    {
+      seedKey:'pinbar-consolidation-double-entry-stop',
+      date:'2026-10-05',
+      text:'Le pinbar possono aiutare anche nella lettura della consolidation: possono meritare una doppia entry sul loro corpo, ma in quel caso bisogna inserire lo stop appena sotto.'
     }
   ];
 
@@ -2416,7 +2479,7 @@ async function buildCompleteExportPackage(){
   return {
     format:'TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT',
     schemaVersion:1,
-    appVersion:'0.18',
+    appVersion:'0.20',
     exportedAt:new Date().toISOString(),
     instructionsForAnalysis:[
       'Treat data as cumulative historical state.',
@@ -2427,7 +2490,9 @@ async function buildCompleteExportPackage(){
       'Use dataCaptures for captured executions and screenshots.',
       'Use guidedSessionId on a data capture to link trades to a specific live session.',
       'Screenshots are embedded as data URLs and keyed by sessionId/capture id.',
-      'Do not infer a trade regime from the live-session initial regime: per-trade context remains independently classified.'
+      'Do not infer a trade regime from the live-session initial regime: per-trade context remains independently classified.',
+      'Trades may be linked to a guided session automatically by its time window or manually when a valid session trade occurred outside that window. Use captureLinkMethod to distinguish AUTO from MANUAL.',
+      'On chart screenshots, small triangles above or below candles are Fractal indicator markers, not trade executions. Use CSV timestamps/prices plus visible chart axes and any native execution markers to locate entries.'
     ],
     framework:buildFrameworkSnapshot(),
     analyticsSnapshot:buildAnalyticsSnapshot(),
@@ -2538,9 +2603,11 @@ function tradeSessionClass(session){
 function renderImportedTradesTable(){
   const box=document.getElementById('tradeTableContainer');
   if(!box)return;
+
   if(!pendingSessionCsv || !pendingSessionCsv.trades.length){
     box.classList.add('hidden');
     box.innerHTML='';
+    renderExcludedTradesPanel();
     return;
   }
 
@@ -2551,6 +2618,7 @@ function renderImportedTradesTable(){
     <table class="tradeTable">
       <thead>
         <tr>
+          <th>COLLEGAMENTO</th>
           <th>SESSIONE</th>
           <th>ATR</th>
           <th>CONTESTO</th>
@@ -2570,6 +2638,11 @@ function renderImportedTradesTable(){
       <tbody>
         ${trades.map((t,i)=>`
           <tr>
+            <td>
+              ${t.captureLinkMethod==='MANUAL'
+                ?`<span class="manualLinkedBadge">MANUALE</span><br><button class="secondary" style="margin-top:5px;padding:4px 7px;font-size:8px" type="button" onclick="removeLinkedTrade('${esc(t.id)}')">RIMUOVI</button>`
+                :`<span class="badge">${pendingCaptureGuidedSessionId?'AUTO':'DATA'}</span>`}
+            </td>
             <td><span class="sessionTag ${tradeSessionClass(t.session)}">${esc(t.session)}</span></td>
             <td>
               <input type="number" step="0.01" placeholder="ATR"
@@ -2598,6 +2671,8 @@ function renderImportedTradesTable(){
         `).join('')}
       </tbody>
     </table>`;
+
+  renderExcludedTradesPanel();
 }
 
 function updateImportedTradeField(index,field,value){
@@ -2608,6 +2683,99 @@ function updateImportedTradeField(index,field,value){
     pendingSessionCsv.trades[index][field]=value;
   }
 }
+
+function renderExcludedTradesPanel(){
+  const box=document.getElementById('excludedTradesContainer');
+  if(!box)return;
+
+  if(!pendingSessionCsv || !pendingCaptureGuidedSessionId || !Array.isArray(pendingSessionCsv.outsideWindowTrades) || !pendingSessionCsv.outsideWindowTrades.length){
+    box.classList.add('hidden');
+    box.innerHTML='';
+    return;
+  }
+
+  const rows=[...pendingSessionCsv.outsideWindowTrades]
+    .sort((a,b)=>(a.enteredTime||'').localeCompare(b.enteredTime||''));
+
+  box.classList.remove('hidden');
+  box.innerHTML=`
+    <div class="manualTradeHead">
+      <div>
+        <b>TRADE DELLA STESSA GIORNATA FUORI DALLA FINESTRA AUTOMATICA</b>
+        <div class="hint">SE UN TRADE APPARTIENE REALMENTE A QUESTA SESSIONE, AGGIUNGILO MANUALMENTE. IL COLLEGAMENTO VERRÀ SALVATO COME MANUALE.</div>
+      </div>
+      <span class="badge">${rows.length} DISPONIBILI</span>
+    </div>
+    <div class="manualTradeList">
+      ${rows.map(t=>`
+        <div class="manualTradeRow">
+          <div class="manualTradeCell"><strong>${esc(t.enteredTime||'—')} → ${esc(t.exitedTime||'—')}</strong>${esc(t.contractName||'')}</div>
+          <div class="manualTradeCell"><strong>${esc(t.side||'—')}</strong>${t.size||0} LOTTI</div>
+          <div class="manualTradeCell"><strong>${money(t.pnl)}</strong>P&L</div>
+          <div class="manualTradeCell"><strong>${esc(t.tradeDuration||'—')}</strong>DURATA</div>
+          <button class="secondary" type="button" onclick="addExcludedTrade('${esc(t.id)}')">+ AGGIUNGI ALLA SESSIONE</button>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function refreshCsvSummary(){
+  if(!pendingSessionCsv)return;
+  const trades=pendingSessionCsv.trades||[];
+  const contracts=[...new Set(trades.map(t=>t.contractName).filter(Boolean))];
+  const rawPnl=trades.reduce((a,t)=>a+n(t.pnl),0);
+  const totalFees=trades.reduce((a,t)=>a+n(t.fees),0);
+
+  const status=document.getElementById('csvStatus');
+  if(status){
+    status.classList.remove('hidden');
+    status.innerHTML=`
+      <span class="badge accent">${esc(pendingSessionCsv.fileName||'CSV')}</span>
+      <span class="badge">${contracts.length?esc(contracts.join(' / ')):'N/D'}</span>
+      <span class="badge">${trades.length} TRADE COLLEGATI</span>
+      <span class="badge">P&L LORDO ${money(rawPnl)}</span>
+      <span class="badge">COSTI ${money(totalFees)}</span>`;
+  }
+}
+
+function addExcludedTrade(id){
+  if(!pendingSessionCsv)return;
+  const idx=(pendingSessionCsv.outsideWindowTrades||[]).findIndex(t=>String(t.id)===String(id));
+  if(idx<0)return;
+
+  const [trade]=pendingSessionCsv.outsideWindowTrades.splice(idx,1);
+  if(pendingSessionCsv.trades.some(t=>String(t.id)===String(trade.id)))return;
+
+  pendingSessionCsv.trades.push({
+    ...trade,
+    captureLinkMethod:'MANUAL',
+    manualLinkReason:'OUTSIDE_AUTOMATIC_SESSION_WINDOW'
+  });
+  pendingSessionCsv.trades.sort((a,b)=>(a.enteredTime||'').localeCompare(b.enteredTime||''));
+
+  refreshCsvSummary();
+  renderImportedTradesTable();
+}
+
+function removeLinkedTrade(id){
+  if(!pendingSessionCsv)return;
+  const idx=pendingSessionCsv.trades.findIndex(t=>String(t.id)===String(id) && t.captureLinkMethod==='MANUAL');
+  if(idx<0)return;
+
+  const [trade]=pendingSessionCsv.trades.splice(idx,1);
+  const restored={...trade};
+  delete restored.captureLinkMethod;
+  delete restored.manualLinkReason;
+
+  if(!Array.isArray(pendingSessionCsv.outsideWindowTrades))pendingSessionCsv.outsideWindowTrades=[];
+  if(!pendingSessionCsv.outsideWindowTrades.some(t=>String(t.id)===String(restored.id))){
+    pendingSessionCsv.outsideWindowTrades.push(restored);
+  }
+
+  refreshCsvSummary();
+  renderImportedTradesTable();
+}
+
 function parseTopstepCsv(text){
   const lines=String(text||'')
     .replace(/^\uFEFF/,'')
@@ -2697,52 +2865,58 @@ function handleSessionCsv(event){
     try{
       const allTrades=parseTopstepCsv(reader.result);
       const dateTrades=allTrades.filter(t=>t.enteredDate===selectedDate);
-      const trades=filterTradesForLinkedGuidedSession(dateTrades);
+      const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
 
-      if(!trades.length){
+      if(!dateTrades.length){
         pendingSessionCsv=null;
         document.getElementById('csvStatus').classList.add('hidden');
         document.getElementById('csvFilterNote').classList.remove('hidden');
-        const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
-        document.getElementById('csvFilterNote').textContent=linked
-          ?`NESSUN TRADE TROVATO NELLA SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} DEL ${selectedDate}.`
-          :`NESSUN TRADE DEL CSV COINCIDE CON LA DATA ${selectedDate}.`;
+        document.getElementById('csvFilterNote').textContent=
+          `NESSUN TRADE DEL CSV COINCIDE CON LA DATA ${selectedDate}.`;
         document.getElementById('tradeTableContainer').classList.add('hidden');
         document.getElementById('tradeTableContainer').innerHTML='';
+        const excluded=document.getElementById('excludedTradesContainer');
+        if(excluded){excluded.classList.add('hidden');excluded.innerHTML=''}
         document.getElementById('csvDrop').classList.remove('loaded');
         return;
       }
 
-      pendingSessionCsv={fileName:file.name,trades,allRowsCount:allTrades.length,dateRowsCount:dateTrades.length,sessionDate:selectedDate,guidedSessionId:pendingCaptureGuidedSessionId||''};
+      let trades=[];
+      let outsideWindowTrades=[];
 
-      const first=trades[0];
-      const contracts=[...new Set(trades.map(t=>t.contractName).filter(Boolean))];
+      if(linked){
+        const automaticTrades=filterTradesForLinkedGuidedSession(dateTrades);
+        const autoIds=new Set(automaticTrades.map(t=>String(t.id)));
+        trades=automaticTrades.map(t=>({...t,captureLinkMethod:'AUTO'}));
+        outsideWindowTrades=dateTrades.filter(t=>!autoIds.has(String(t.id))).map(t=>({...t}));
+      }else{
+        trades=dateTrades.map(t=>({...t,captureLinkMethod:'DATE'}));
+      }
 
-      const rawPnl=trades.reduce((a,t)=>a+n(t.pnl),0);
-      const totalFees=trades.reduce((a,t)=>a+n(t.fees),0);
+      pendingSessionCsv={
+        fileName:file.name,
+        trades,
+        outsideWindowTrades,
+        allRowsCount:allTrades.length,
+        dateRowsCount:dateTrades.length,
+        sessionDate:selectedDate,
+        guidedSessionId:pendingCaptureGuidedSessionId||''
+      };
 
-      const status=document.getElementById('csvStatus');
-      status.classList.remove('hidden');
-      status.innerHTML=`
-        <span class="badge accent">${esc(file.name)}</span>
-        <span class="badge">${contracts.length?esc(contracts.join(' / ')):'N/D'}</span>
-        <span class="badge">${trades.length} TRADE</span>
-        <span class="badge">P&L LORDO ${money(rawPnl)}</span>
-        <span class="badge">COSTI ${money(totalFees)}</span>`;
+      document.getElementById('csvDrop').classList.add('loaded');
+      refreshCsvSummary();
 
       const note=document.getElementById('csvFilterNote');
       note.classList.remove('hidden');
-      const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
+
       if(linked){
-        const outsideWindow=dateTrades.length-trades.length;
         const otherDate=allTrades.length-dateTrades.length;
-        note.textContent=`SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} · ${trades.length} TRADE COLLEGATI · ${outsideWindow} TRADE DELLA STESSA DATA FUORI FINESTRA · ${otherDate} DI ALTRA DATA.`;
+        note.textContent=`SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} · ${trades.length} TRADE COLLEGATI AUTOMATICAMENTE · ${outsideWindowTrades.length} TRADE DELLA STESSA DATA DISPONIBILI PER AGGIUNTA MANUALE · ${otherDate} DI ALTRA DATA.`;
       }else{
         const excluded=allTrades.length-trades.length;
         note.textContent=`DATA SESSIONE: ${selectedDate} · ${trades.length} TRADE INCLUSI · ${excluded} ESCLUSI DAL CSV PER DATA DIFFERENTE.`;
       }
 
-      document.getElementById('csvDrop').classList.add('loaded');
       renderImportedTradesTable();
     }catch(err){
       pendingSessionCsv=null;
@@ -2750,6 +2924,8 @@ function handleSessionCsv(event){
       document.getElementById('csvFilterNote').classList.add('hidden');
       document.getElementById('tradeTableContainer').classList.add('hidden');
       document.getElementById('tradeTableContainer').innerHTML='';
+      const excluded=document.getElementById('excludedTradesContainer');
+      if(excluded){excluded.classList.add('hidden');excluded.innerHTML=''}
       document.getElementById('csvDrop').classList.remove('loaded');
       alert('CSV NON RICONOSCIUTO: '+err.message);
     }
@@ -2772,6 +2948,8 @@ function resetSessionCsvForm(){
   if(note){note.textContent='';note.classList.add('hidden')}
   const box=document.getElementById('tradeTableContainer');
   if(box){box.innerHTML='';box.classList.add('hidden')}
+  const excluded=document.getElementById('excludedTradesContainer');
+  if(excluded){excluded.innerHTML='';excluded.classList.add('hidden')}
 }
 
 async function saveDataCapture(){
@@ -2793,6 +2971,11 @@ async function saveDataCapture(){
     market:(imported.length&&imported[0].contractName)?imported[0].contractName:'',
     csvFileName:pendingSessionCsv?pendingSessionCsv.fileName:'',
     importedTrades:imported,
+    tradeLinking:{
+      automatic:imported.filter(t=>t.captureLinkMethod==='AUTO').length,
+      manual:imported.filter(t=>t.captureLinkMethod==='MANUAL').length,
+      dateOnly:imported.filter(t=>t.captureLinkMethod==='DATE').length
+    },
     screenshot:{
       present:!!screenshotToSave,
       name:screenshotToSave?screenshotToSave.name:'',
