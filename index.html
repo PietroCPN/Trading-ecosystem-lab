@@ -885,6 +885,25 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   font-weight:900;
   letter-spacing:.08em;
 }
+.manualTradeRow.alreadyMapped{
+  opacity:.28;
+  filter:saturate(.35);
+}
+.manualTradeRow.alreadyMapped button{
+  cursor:not-allowed;
+  pointer-events:none;
+}
+.alreadyMappedBadge{
+  display:inline-block;
+  border:1px solid #4b535b;
+  border-radius:999px;
+  padding:3px 7px;
+  color:#aeb6be;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
 @media(max-width:760px){
   .manualTradeRow{grid-template-columns:1fr 1fr}
   .manualTradeRow button{grid-column:1 / -1}
@@ -936,7 +955,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.21 — focus check + 3 emotional states</div>
+      <div class="ver">v0.23 — focus check + 3 emotional states</div>
     </div>
     <div class="nav">
       <button id="navHome" onclick="showView('home')">OGGI</button>
@@ -2485,7 +2504,7 @@ async function buildCompleteExportPackage(){
   return {
     format:'TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT',
     schemaVersion:1,
-    appVersion:'0.21',
+    appVersion:'0.23',
     exportedAt:new Date().toISOString(),
     instructionsForAnalysis:[
       'Treat data as cumulative historical state.',
@@ -2499,7 +2518,9 @@ async function buildCompleteExportPackage(){
       'Do not infer a trade regime from the live-session initial regime: per-trade context remains independently classified.',
       'Trades may be linked to a guided session automatically by its time window or manually when a valid session trade occurred outside that window. Use captureLinkMethod to distinguish AUTO from MANUAL.',
       'On chart screenshots, small triangles above or below candles are Fractal indicator markers, not trade executions. Use CSV timestamps/prices plus visible chart axes and any native execution markers to locate entries.',
-      'Operational costs are defined as Fees + Commissions. Raw trade fields remain separate as fees and commissions; analyticsSnapshot.totals.operationalCosts is their combined total.'
+      'Operational costs are defined as Fees + Commissions. Raw trade fields remain separate as fees and commissions; analyticsSnapshot.totals.operationalCosts is their combined total.',
+      'Topstep trade Id is used as the primary duplicate guard during CSV import. IDs already present in any saved data capture are shown as already mapped, cannot be added again, and are excluded again at save time as a final safeguard.',
+      'Per-trade context can be classified as CONSOLIDAMENTO, TREND, or COUNTER TREND.'
     ],
     framework:buildFrameworkSnapshot(),
     analyticsSnapshot:buildAnalyticsSnapshot(),
@@ -2661,6 +2682,7 @@ function renderImportedTradesTable(){
                 <option value="" ${!t.context?'selected':''}>—</option>
                 <option value="CONSOLIDAMENTO" ${t.context==='CONSOLIDAMENTO'?'selected':''}>CONSOLIDAMENTO</option>
                 <option value="TREND" ${t.context==='TREND'?'selected':''}>TREND</option>
+                <option value="COUNTER TREND" ${t.context==='COUNTER TREND'?'selected':''}>COUNTER TREND</option>
               </select>
             </td>
             <td>${esc(t.id)}</td>
@@ -2691,11 +2713,35 @@ function updateImportedTradeField(index,field,value){
   }
 }
 
+function existingCapturedTradeIndex(){
+  const db=getDB();
+  const index=new Map();
+  (db.dataCaptures||[]).forEach(c=>{
+    (c.importedTrades||[]).forEach(t=>{
+      if(t?.id==null || String(t.id).trim()==='')return;
+      const key=String(t.id);
+      if(!index.has(key)){
+        index.set(key,{
+          captureId:c.id||'',
+          captureDate:c.date||'',
+          guidedSessionId:c.guidedSessionId||''
+        });
+      }
+    });
+  });
+  return index;
+}
+
+function tradeAlreadyCaptured(t,index){
+  if(!t || t.id==null || String(t.id).trim()==='')return false;
+  return (index||existingCapturedTradeIndex()).has(String(t.id));
+}
+
 function renderExcludedTradesPanel(){
   const box=document.getElementById('excludedTradesContainer');
   if(!box)return;
 
-  if(!pendingSessionCsv || !pendingCaptureGuidedSessionId || !Array.isArray(pendingSessionCsv.outsideWindowTrades) || !pendingSessionCsv.outsideWindowTrades.length){
+  if(!pendingSessionCsv || !Array.isArray(pendingSessionCsv.outsideWindowTrades) || !pendingSessionCsv.outsideWindowTrades.length){
     box.classList.add('hidden');
     box.innerHTML='';
     return;
@@ -2704,23 +2750,39 @@ function renderExcludedTradesPanel(){
   const rows=[...pendingSessionCsv.outsideWindowTrades]
     .sort((a,b)=>(a.enteredTime||'').localeCompare(b.enteredTime||''));
 
+  const available=rows.filter(t=>!t.alreadyMapped).length;
+  const mapped=rows.length-available;
+  const linked=!!pendingCaptureGuidedSessionId;
+
   box.classList.remove('hidden');
   box.innerHTML=`
     <div class="manualTradeHead">
       <div>
-        <b>TRADE DELLA STESSA GIORNATA FUORI DALLA FINESTRA AUTOMATICA</b>
-        <div class="hint">SE UN TRADE APPARTIENE REALMENTE A QUESTA SESSIONE, AGGIUNGILO MANUALMENTE. IL COLLEGAMENTO VERRÀ SALVATO COME MANUALE.</div>
+        <b>${linked?'ALTRI TRADE DELLA STESSA GIORNATA':'TRADE GIÀ PRESENTI NEL LAB'}</b>
+        <div class="hint">
+          ${linked
+            ?'PUOI AGGIUNGERE MANUALMENTE SOLO I TRADE NON ANCORA MAPPATI. QUELLI GIÀ PRESENTI NEL LAB RESTANO VISIBILI MA DISABILITATI.'
+            :'I TRADE CON ID GIÀ PRESENTE NEL LAB SONO MOSTRATI SOLO COME RIFERIMENTO E NON VENGONO IMPORTATI DI NUOVO.'}
+        </div>
       </div>
-      <span class="badge">${rows.length} DISPONIBILI</span>
+      <span class="badge">${available} DISPONIBILI · ${mapped} GIÀ MAPPATI</span>
     </div>
     <div class="manualTradeList">
       ${rows.map(t=>`
-        <div class="manualTradeRow">
-          <div class="manualTradeCell"><strong>${esc(t.enteredTime||'—')} → ${esc(t.exitedTime||'—')}</strong>${esc(t.contractName||'')}</div>
+        <div class="manualTradeRow ${t.alreadyMapped?'alreadyMapped':''}">
+          <div class="manualTradeCell">
+            <strong>${esc(t.enteredTime||'—')} → ${esc(t.exitedTime||'—')}</strong>
+            ${esc(t.contractName||'')}
+            ${t.alreadyMapped?'<span class="alreadyMappedBadge">GIÀ MAPPATO</span>':''}
+          </div>
           <div class="manualTradeCell"><strong>${esc(t.side||'—')}</strong>${t.size||0} LOTTI</div>
           <div class="manualTradeCell"><strong>${money(t.pnl)}</strong>P&L</div>
           <div class="manualTradeCell"><strong>${esc(t.tradeDuration||'—')}</strong>DURATA</div>
-          <button class="secondary" type="button" onclick="addExcludedTrade('${esc(t.id)}')">+ AGGIUNGI ALLA SESSIONE</button>
+          ${t.alreadyMapped
+            ?`<button class="secondary" type="button" disabled>GIÀ CARICATO</button>`
+            :linked
+              ?`<button class="secondary" type="button" onclick="addExcludedTrade('${esc(t.id)}')">+ AGGIUNGI ALLA SESSIONE</button>`
+              :`<button class="secondary" type="button" disabled>NON NECESSARIO</button>`}
         </div>
       `).join('')}
     </div>`;
@@ -2750,11 +2812,22 @@ function addExcludedTrade(id){
   const idx=(pendingSessionCsv.outsideWindowTrades||[]).findIndex(t=>String(t.id)===String(id));
   if(idx<0)return;
 
-  const [trade]=pendingSessionCsv.outsideWindowTrades.splice(idx,1);
+  const trade=pendingSessionCsv.outsideWindowTrades[idx];
+  const existingIndex=existingCapturedTradeIndex();
+
+  if(trade.alreadyMapped || tradeAlreadyCaptured(trade,existingIndex)){
+    trade.alreadyMapped=true;
+    renderExcludedTradesPanel();
+    alert('QUESTO TRADE È GIÀ PRESENTE NEL LAB E NON PUÒ ESSERE CARICATO DUE VOLTE.');
+    return;
+  }
+
   if(pendingSessionCsv.trades.some(t=>String(t.id)===String(trade.id)))return;
 
+  pendingSessionCsv.outsideWindowTrades.splice(idx,1);
   pendingSessionCsv.trades.push({
     ...trade,
+    alreadyMapped:false,
     captureLinkMethod:'MANUAL',
     manualLinkReason:'OUTSIDE_AUTOMATIC_SESSION_WINDOW'
   });
@@ -2770,7 +2843,7 @@ function removeLinkedTrade(id){
   if(idx<0)return;
 
   const [trade]=pendingSessionCsv.trades.splice(idx,1);
-  const restored={...trade};
+  const restored={...trade,alreadyMapped:false,candidateReason:'OUTSIDE_AUTOMATIC_SESSION_WINDOW'};
   delete restored.captureLinkMethod;
   delete restored.manualLinkReason;
 
@@ -2871,7 +2944,22 @@ function handleSessionCsv(event){
   reader.onload=()=>{
     try{
       const allTrades=parseTopstepCsv(reader.result);
-      const dateTrades=allTrades.filter(t=>t.enteredDate===selectedDate);
+      const existingIndex=existingCapturedTradeIndex();
+
+      const dateTrades=allTrades
+        .filter(t=>t.enteredDate===selectedDate)
+        .map(t=>{
+          const previous=(t.id!=null && String(t.id).trim()!=='')
+            ?existingIndex.get(String(t.id))
+            :null;
+          return {
+            ...t,
+            alreadyMapped:!!previous,
+            alreadyMappedCaptureId:previous?.captureId||'',
+            alreadyMappedCaptureDate:previous?.captureDate||''
+          };
+        });
+
       const linked=pendingCaptureGuidedSessionId?getGuidedById(pendingCaptureGuidedSessionId):null;
 
       if(!dateTrades.length){
@@ -2894,10 +2982,30 @@ function handleSessionCsv(event){
       if(linked){
         const automaticTrades=filterTradesForLinkedGuidedSession(dateTrades);
         const autoIds=new Set(automaticTrades.map(t=>String(t.id)));
-        trades=automaticTrades.map(t=>({...t,captureLinkMethod:'AUTO'}));
-        outsideWindowTrades=dateTrades.filter(t=>!autoIds.has(String(t.id))).map(t=>({...t}));
+
+        // Only new IDs are auto-linked. Already-mapped IDs remain visible below,
+        // faded and disabled, so they cannot be loaded a second time.
+        trades=automaticTrades
+          .filter(t=>!t.alreadyMapped)
+          .map(t=>({...t,captureLinkMethod:'AUTO'}));
+
+        const includedIds=new Set(trades.map(t=>String(t.id)));
+        outsideWindowTrades=dateTrades
+          .filter(t=>!includedIds.has(String(t.id)))
+          .map(t=>({
+            ...t,
+            candidateReason:t.alreadyMapped
+              ?'ALREADY_MAPPED'
+              :(autoIds.has(String(t.id))?'ALREADY_MAPPED_IN_AUTO_WINDOW':'OUTSIDE_AUTOMATIC_SESSION_WINDOW')
+          }));
       }else{
-        trades=dateTrades.map(t=>({...t,captureLinkMethod:'DATE'}));
+        trades=dateTrades
+          .filter(t=>!t.alreadyMapped)
+          .map(t=>({...t,captureLinkMethod:'DATE'}));
+
+        outsideWindowTrades=dateTrades
+          .filter(t=>t.alreadyMapped)
+          .map(t=>({...t,candidateReason:'ALREADY_MAPPED'}));
       }
 
       pendingSessionCsv={
@@ -2916,12 +3024,15 @@ function handleSessionCsv(event){
       const note=document.getElementById('csvFilterNote');
       note.classList.remove('hidden');
 
+      const mappedCount=dateTrades.filter(t=>t.alreadyMapped).length;
+
       if(linked){
+        const availableManual=outsideWindowTrades.filter(t=>!t.alreadyMapped).length;
         const otherDate=allTrades.length-dateTrades.length;
-        note.textContent=`SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} · ${trades.length} TRADE COLLEGATI AUTOMATICAMENTE · ${outsideWindowTrades.length} TRADE DELLA STESSA DATA DISPONIBILI PER AGGIUNTA MANUALE · ${otherDate} DI ALTRA DATA.`;
+        note.textContent=`SESSIONE LIVE ${linked.startTime||'—'}–${linked.endTime||'—'} · ${trades.length} TRADE NUOVI COLLEGATI AUTOMATICAMENTE · ${availableManual} DISPONIBILI PER AGGIUNTA MANUALE · ${mappedCount} GIÀ MAPPATI · ${otherDate} DI ALTRA DATA.`;
       }else{
-        const excluded=allTrades.length-trades.length;
-        note.textContent=`DATA SESSIONE: ${selectedDate} · ${trades.length} TRADE INCLUSI · ${excluded} ESCLUSI DAL CSV PER DATA DIFFERENTE.`;
+        const otherDate=allTrades.length-dateTrades.length;
+        note.textContent=`DATA SESSIONE: ${selectedDate} · ${trades.length} TRADE NUOVI INCLUSI · ${mappedCount} GIÀ MAPPATI E NON REIMPORTATI · ${otherDate} DI ALTRA DATA.`;
       }
 
       renderImportedTradesTable();
@@ -2961,8 +3072,15 @@ function resetSessionCsvForm(){
 
 async function saveDataCapture(){
   const date=document.getElementById('st_date').value||today();
-  const imported=pendingSessionCsv?pendingSessionCsv.trades:[];
+  const importedRaw=pendingSessionCsv?pendingSessionCsv.trades:[];
+  const existingIndex=existingCapturedTradeIndex();
+  const duplicateAtSave=importedRaw.filter(t=>tradeAlreadyCaptured(t,existingIndex));
+  const imported=importedRaw.filter(t=>!tradeAlreadyCaptured(t,existingIndex));
   const screenshotToSave=pendingSessionScreenshot;
+
+  if(duplicateAtSave.length){
+    alert(`${duplicateAtSave.length} TRADE GIÀ PRESENTI NEL LAB SONO STATI ESCLUSI DAL SALVATAGGIO PER EVITARE DUPLICATI.`);
+  }
 
   if(!imported.length && !screenshotToSave){
     alert('CARICA ALMENO UN CSV O UNO SCREENSHOT.');
