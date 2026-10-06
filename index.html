@@ -936,7 +936,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
   <header class="top">
     <div>
       <div class="brand">TRADING ECOSYSTEM LAB</div>
-      <div class="ver">v0.20 — focus check + 3 emotional states</div>
+      <div class="ver">v0.21 — focus check + 3 emotional states</div>
     </div>
     <div class="nav">
       <button id="navHome" onclick="showView('home')">OGGI</button>
@@ -1011,7 +1011,7 @@ input::placeholder, textarea::placeholder { text-transform: uppercase; }
         <div class="metric"><div class="l">DATA CAPTURE</div><div class="v" id="aSessions">0</div></div>
         <div class="metric"><div class="l">TRADE UNICI</div><div class="v" id="aTrades">0</div></div>
         <div class="metric"><div class="l">P&L LORDO</div><div class="v" id="aPnl">$0</div></div>
-        <div class="metric"><div class="l">COSTI</div><div class="v" id="aFees">$0</div></div>
+        <div class="metric"><div class="l">COSTI · FEE + COMMISSIONI</div><div class="v" id="aFees">$0</div></div>
       </div>
 
       <div class="card">
@@ -2226,6 +2226,10 @@ function parseTradeDurationSeconds(value){
   return null;
 }
 
+function tradeOperationalCost(t){
+  return n(t?.fees)+n(t?.commissions);
+}
+
 function tradeDurationSeconds(t){
   if(t && Number.isFinite(Number(t.durationSeconds)))return Number(t.durationSeconds);
 
@@ -2441,7 +2445,9 @@ function buildAnalyticsSnapshot(){
       dataCaptures:(db.dataCaptures||[]).length,
       uniqueTrades:trades.length,
       grossPnl:trades.reduce((a,t)=>a+n(t.pnl),0),
-      fees:trades.reduce((a,t)=>a+n(t.fees),0)
+      fees:trades.reduce((a,t)=>a+n(t.fees),0),
+      commissions:trades.reduce((a,t)=>a+n(t.commissions),0),
+      operationalCosts:trades.reduce((a,t)=>a+tradeOperationalCost(t),0)
     },
     byTradingSession:serializableAgg(tradeAgg(trades,t=>t.session)),
     byContext:serializableAgg(tradeAgg(trades,t=>t.context)),
@@ -2479,7 +2485,7 @@ async function buildCompleteExportPackage(){
   return {
     format:'TRADING_ECOSYSTEM_LAB_COMPLETE_EXPORT',
     schemaVersion:1,
-    appVersion:'0.20',
+    appVersion:'0.21',
     exportedAt:new Date().toISOString(),
     instructionsForAnalysis:[
       'Treat data as cumulative historical state.',
@@ -2492,7 +2498,8 @@ async function buildCompleteExportPackage(){
       'Screenshots are embedded as data URLs and keyed by sessionId/capture id.',
       'Do not infer a trade regime from the live-session initial regime: per-trade context remains independently classified.',
       'Trades may be linked to a guided session automatically by its time window or manually when a valid session trade occurred outside that window. Use captureLinkMethod to distinguish AUTO from MANUAL.',
-      'On chart screenshots, small triangles above or below candles are Fractal indicator markers, not trade executions. Use CSV timestamps/prices plus visible chart axes and any native execution markers to locate entries.'
+      'On chart screenshots, small triangles above or below candles are Fractal indicator markers, not trade executions. Use CSV timestamps/prices plus visible chart axes and any native execution markers to locate entries.',
+      'Operational costs are defined as Fees + Commissions. Raw trade fields remain separate as fees and commissions; analyticsSnapshot.totals.operationalCosts is their combined total.'
     ],
     framework:buildFrameworkSnapshot(),
     analyticsSnapshot:buildAnalyticsSnapshot(),
@@ -2631,7 +2638,7 @@ function renderImportedTradesTable(){
           <th>SIZE</th>
           <th>DIREZIONE</th>
           <th>PNL</th>
-          <th>COSTI</th>
+          <th>COSTI<br><span style="font-size:8px;opacity:.65">FEE + COMM.</span></th>
           <th>DURATA</th>
         </tr>
       </thead>
@@ -2665,7 +2672,7 @@ function renderImportedTradesTable(){
             <td>${t.size}</td>
             <td>${esc(t.side)}</td>
             <td class="${t.pnl>=0?'tradePositive':'tradeNegative'}">${money(t.pnl)}</td>
-            <td>${money(t.fees)}</td>
+            <td>${money(tradeOperationalCost(t))}</td>
             <td>${esc(t.tradeDuration)}</td>
           </tr>
         `).join('')}
@@ -2724,7 +2731,7 @@ function refreshCsvSummary(){
   const trades=pendingSessionCsv.trades||[];
   const contracts=[...new Set(trades.map(t=>t.contractName).filter(Boolean))];
   const rawPnl=trades.reduce((a,t)=>a+n(t.pnl),0);
-  const totalFees=trades.reduce((a,t)=>a+n(t.fees),0);
+  const totalCosts=trades.reduce((a,t)=>a+tradeOperationalCost(t),0);
 
   const status=document.getElementById('csvStatus');
   if(status){
@@ -2734,7 +2741,7 @@ function refreshCsvSummary(){
       <span class="badge">${contracts.length?esc(contracts.join(' / ')):'N/D'}</span>
       <span class="badge">${trades.length} TRADE COLLEGATI</span>
       <span class="badge">P&L LORDO ${money(rawPnl)}</span>
-      <span class="badge">COSTI ${money(totalFees)}</span>`;
+      <span class="badge">COSTI ${money(totalCosts)}</span>`;
   }
 }
 
@@ -3447,7 +3454,7 @@ function renderAnalytics(){
   document.getElementById('aSessions').textContent=captures.length;
   document.getElementById('aTrades').textContent=trades.length;
   document.getElementById('aPnl').textContent=money(trades.reduce((a,t)=>a+n(t.pnl),0));
-  document.getElementById('aFees').textContent=money(trades.reduce((a,t)=>a+n(t.fees),0));
+  document.getElementById('aFees').textContent=money(trades.reduce((a,t)=>a+tradeOperationalCost(t),0));
 
   document.getElementById('sessionStatsTable').innerHTML=statsRows(tradeAgg(trades,t=>t.session));
   document.getElementById('contextStatsTable').innerHTML=statsRows(tradeAgg(trades,t=>t.context));
